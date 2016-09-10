@@ -6,6 +6,10 @@ var roleBuilder = require('role.builder');
 
 var creepManager = require('creep.manager');
 
+var spawnBuildingRoad = require('spawn.buildingRoad');
+
+const spawn1 = Game.spawns['Spawn1'];
+
 module.exports.loop = function () {
 
     // var tower = Game.getObjectById('165d3aed5660381a7fd71d7b');
@@ -32,8 +36,10 @@ module.exports.loop = function () {
 
     creepManager.manageCreeps(gameSettings);
 
+    spawnBuildingRoad.run(spawn1.room);
+
     // creepManager.changeRole(Game.creeps, 'harvester', 'upgrader', 2);
-    
+
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
 
