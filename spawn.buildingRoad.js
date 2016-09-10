@@ -13,11 +13,11 @@ var spawnBuildingRoad = {
         if (!this.isCompleted(roadName)) {
             var {x, y} = this.findPos(room, roadName);
             console.log(`findPos x: ${x}, y: ${y}`);
-            this.createRoad(room, x, y);
+            this.createRoad(room, roadName, x, y);
         }
     },
 
-    isCompleted: (roadName) => {
+    getState: function(roadName) {
         if (Memory.road === undefined) {
             Memory.road = {};
         }
@@ -26,17 +26,34 @@ var spawnBuildingRoad = {
             Memory.road[roadName] = {};
         }
 
-        const roadState = Memory.road[roadName];
+        return Memory.road[roadName];
+    },
 
-        if (roadState.status && roadState.status == ROAD_COMPLETE) {
-            return true;
-        }
+    getStep: function(roadName) {
+        const roadState = this.getState(roadName);
 
         if (roadState.step === undefined) {
             roadState.step = 0;
         }
 
-        if (roadState.step > (roadSettings[roadName].length - 1)) {
+        return roadState.step;
+    },
+
+    checkProgress: function(room, x, y) {
+        const pos = room.getPositionAt(x, y);
+        // var source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+    },
+
+    isCompleted: function(roadName) {
+        const roadState = this.getState(roadName);
+
+        if (roadState.status && roadState.status == ROAD_COMPLETE) {
+            return true;
+        }
+
+        const step = this.getStep(roadName);
+
+        if (step > (roadSettings[roadName].length - 1)) {
             roadState.status = ROAD_COMPLETE;
             return true;
         }
@@ -49,9 +66,13 @@ var spawnBuildingRoad = {
         return roadSettings[roadName][step];
     },
 
-    createRoad: (room, x, y) => {
+    createRoad: (room, roadName, x, y) => {
         const result = room.createConstructionSite( x, y, STRUCTURE_ROAD );
         console.log(`Create road result ${result}`);
+
+        if (result == OK || result == ERR_INVALID_TARGET) {
+            Memory.road[roadName].step++;
+        }
     }
 }
 
