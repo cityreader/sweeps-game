@@ -1,8 +1,13 @@
-var roleHarvester = {
+const roleManager = require('role.manager');
+const role = 'harvester';
+
+const roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        creep.say('havester');
+
+        const creepSettings = roleManager.getCreepSettings(creep);
+        this.echo(creep, creepSettings);
 
         if(creep.carry.energy < creep.carryCapacity) {
             var sources = creep.room.find(FIND_SOURCES);
@@ -27,7 +32,10 @@ var roleHarvester = {
                 }
             }
         }
-    }
+    },
+
+    echo: (creep, creepSettings) => {creepSettings.echo && creep.say(`${creepSettings.model} ${role}`)}
+
 };
 
 module.exports = roleHarvester;
