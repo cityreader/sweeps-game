@@ -61,7 +61,7 @@ const roomBuildingManager = {
 
         const step = this.getStep(buildName);
 
-        if (step > (roomBuildingSettings[buildName].length - 1)) {
+        if (step > (roomBuildingSettings[buildName].pos.length - 1)) {
             buildState.status = BUILD_COMPLETE;
             return true;
         }
