@@ -16,6 +16,8 @@ const roleUpgrader = {
         if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
             creep.memory.upgrading = true;
             creep.say('upgrading');
+
+            creep.moveTo(Game.flags.Flag1);
         }
 
         if(creep.memory.upgrading) {

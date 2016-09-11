@@ -16,6 +16,8 @@ const roleBuilder = {
         if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
             creep.memory.building = true;
             creep.say('building');
+
+            creep.moveTo(Game.flags.Flag2);
         }
 
         if(creep.memory.building) {
