@@ -13,6 +13,7 @@ var gameSettings = {
                 source: 1,
             }
         ],
+
         upgrader: [
             {
                 echo: false,
@@ -21,6 +22,7 @@ var gameSettings = {
                 source: 0
             }
         ],
+
         builder: [
             // {
             //     echo: true,
@@ -30,7 +32,21 @@ var gameSettings = {
             {
                 echo: true,
                 model: 'b2',
-                max: 3,
+                max: 2,
+                source: 1,
+            }
+        ],
+
+        repairer: [
+            // {
+            //     echo: true,
+            //     model: 'b1',
+            //     max: 1
+            // },
+            {
+                echo: true,
+                model: 'b2',
+                max: 2,
                 source: 1,
             }
         ]

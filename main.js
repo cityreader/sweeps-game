@@ -3,6 +3,7 @@ var gameSettings = require('game.settings');
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+var roleRpairer = require('role.repairer');
 
 var creepManager = require('creep.manager');
 
@@ -52,6 +53,9 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'builder') {
             roleBuilder.run(creep);
+        }
+        if(creep.memory.role == 'repairer') {
+            roleRpairer.run(creep);
         }
     }
 }
