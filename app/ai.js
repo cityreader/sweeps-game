@@ -14,36 +14,41 @@ var bootstrap = {
             }
 
 
+        /**
+         * Currying function to create flags.
+         *
+         * @param keyName
+         * @param prefix
+         */
+        const createFlags = (keyName, prefix) =>
+            (obj) => {
+                _.map(obj[keyName], (target, index) => {
+                    const flagName = `${prefix}${index}`;
+                    const colors = tools.getRandomColors(2);
+
+                    console.log(`color1 ${colors[0]} color2 ${colors[1]}`);
+                    const result = obj.room.createFlag(target.pos, flagName, colors[0], colors[1]);
+
+                    if (result == OK) {
+                        tools.watchDog(`Create new flag ${flagName}`);
+                    }
+                });
+
+                return obj;
+            }
 
         const findFirstRoom = (obj) => {
             const room = _.reduce(obj.rooms, (result, room) => room, {});
 
             tools.watchDog(`Find default room ${room.name}`);
 
-            obj.room = room;
-            return obj;
+            return Object.assign({}, obj, {room});
         };
 
         const findSources = (obj) => {
             const sources = obj.room.find(FIND_SOURCES);
 
-            obj.sources = sources;
-
-            return obj;
-        };
-
-        const createEnergyFlags = (obj) => {
-            obj.sources.map((source, index) => {
-                tools.watchDog(`Find source ${index} x ${source.pos.x} y ${source.pos.y}`);
-
-                const flagName = `Energy${index}`;
-                const result = obj.room.createFlag(source.pos, flagName, COLOR_PURPLE, COLOR_BLUE);
-                if (result == OK) {
-                    tools.watchDog(`Create new flag ${flagName}`);
-                }
-            });
-
-            return obj;
+            return Object.assign({}, obj, {sources});
         };
 
         const createRoomControllerFlag = (obj) => {
@@ -54,6 +59,16 @@ var bootstrap = {
             }
 
             return obj;
+        };
+
+        const findPathToEnergySource0 = (obj) => {
+            obj.room.findPath
+
+        };
+
+        const findPathToRoomController = (obj) => {
+
+
         };
 
         const createFirstContainer = (obj) => {
@@ -76,20 +91,19 @@ var bootstrap = {
         const fns = [
             findFirstRoom,
             findSources,
-            createEnergyFlags,
+            createFlags('sources', 'Source'),
+            createFlags('spawns', 'Spawn'),
             createRoomControllerFlag,
-            createFirstContainer
+            createFirstContainer,
+            findPathToEnergySource0,
+            findPathToRoomController,
             createFirstMiner,
         ];
 
 
         const processing = compose(fns);
 
-        var obj = {
-            rooms: Game.rooms,
-        }
-
-        processing(obj);
+        processing(Game);
 
 
 
