@@ -1,5 +1,9 @@
 var gameSettings = require('game.settings');
 
+var tools = require('tools');
+
+var ai = require('ai');
+
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
@@ -12,6 +16,8 @@ var roomBuildingManager = require('room.building.manager');
 const spawn1 = Game.spawns['Spawn1'];
 
 module.exports.loop = function () {
+
+    ai.run();
 
     // var tower = Game.getObjectById('165d3aed5660381a7fd71d7b');
     // if (tower) {
@@ -35,27 +41,27 @@ module.exports.loop = function () {
         }
     }
 
-    creepManager.manageCreeps(gameSettings);
-
-    roomBuildingManager.run(spawn1.room);
-
-    // creepManager.changeRole(Game.creeps, 'harvester', 'upgrader', 2);
-
-    for(var name in Game.creeps) {
-        var creep = Game.creeps[name];
-
-        // creep.moveTo(11, 15);
-        if(creep.memory.role == 'harvester') {
-            roleHarvester.run(creep);
-        }
-        if(creep.memory.role == 'upgrader') {
-            roleUpgrader.run(creep);
-        }
-        if(creep.memory.role == 'builder') {
-            roleBuilder.run(creep);
-        }
-        if(creep.memory.role == 'repairer') {
-            roleRpairer.run(creep);
-        }
-    }
+    // creepManager.manageCreeps(gameSettings);
+    //
+    // roomBuildingManager.run(spawn1.room);
+    //
+    // // creepManager.changeRole(Game.creeps, 'harvester', 'upgrader', 2);
+    //
+    // for(var name in Game.creeps) {
+    //     var creep = Game.creeps[name];
+    //
+    //     // creep.moveTo(11, 15);
+    //     if(creep.memory.role == 'harvester') {
+    //         roleHarvester.run(creep);
+    //     }
+    //     if(creep.memory.role == 'upgrader') {
+    //         roleUpgrader.run(creep);
+    //     }
+    //     if(creep.memory.role == 'builder') {
+    //         roleBuilder.run(creep);
+    //     }
+    //     if(creep.memory.role == 'repairer') {
+    //         roleRpairer.run(creep);
+    //     }
+    // }
 }
