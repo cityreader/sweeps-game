@@ -1,4 +1,16 @@
 var roomBuildingSettings = {
+    e1: {
+        type: STRUCTURE_EXTENSION,
+        pos: [
+            {x: 13, y: 37},
+            {x: 14, y: 36},
+            {x: 15, y: 35},
+            {x: 14, y: 34},
+            {x: 15, y: 33},
+            {x: 16, y: 34},
+        ]
+    },
+    
     // Main road
     m1: {
         type: STRUCTURE_ROAD,
@@ -155,6 +167,12 @@ var roomBuildingSettings = {
             {x: 14, y: 26},
             {x: 20, y: 18},
             {x: 26, y: 28},
+
+            {x: 24, y: 21},
+            {x: 24, y: 22},
+            {x: 24, y: 23},
+            {x: 24, y: 24},
+            {x: 25, y: 24},
 
         ]
     },
