@@ -14,19 +14,31 @@ var bootstrap = {
             }
 
 
+        const makeParent = (fields, object={}) => {
+            var fields_arr = fields.split('.');
+
+            const first = fields_arr.shift();
+            const remaining = fields_arr;
+
+            console.log(`first ${first} ${remaining}`);
+
+            return (remaining.length) ?
+                makeParent(remaining.join('.'), object[first]) : (object[first] !== undefined ? object[first] : object[first] = {})
+        }
+
+
         /**
          * Currying function to create flags.
          *
          * @param keyName
          * @param prefix
          */
-        const createFlags = (keyName, prefix) =>
+        const createFlags = (keyName, prefix = '') =>
             (obj) => {
                 _.map(obj[keyName], (target, index) => {
-                    const flagName = `${prefix}${index}`;
-                    const colors = tools.getRandomColors(2);
+                    let flagName = `${prefix}${index}`;
+                    let colors = tools.getRandomColors(2);
 
-                    console.log(`color1 ${colors[0]} color2 ${colors[1]}`);
                     const result = obj.room.createFlag(target.pos, flagName, colors[0], colors[1]);
 
                     if (result == OK) {
@@ -36,6 +48,51 @@ var bootstrap = {
 
                 return obj;
             }
+
+        /**
+         * Currying function to find path of two pos.
+         *
+         * @param flag1
+         * @param flag2
+         * @param opts
+         * @param memoryName
+         */
+        const findPath = (flag1, flag2, opts, memoryName = '') =>
+            (obj) => {
+                console.log(`${flag1} ${flag2}`);
+                console.log(`${flag1} ${flag2}`);
+                const result = obj.room.findPath(obj.flags[flag1].pos, obj.flags[flag2].pos, opts);
+                if (result) {
+                    tools.watchDog(`Find path from ${flag1} to ${flag1}`);
+
+                    if (memoryName != '') {
+                        makeParent('paths', Memory);
+                        Memory.paths[memoryName] = result;
+                        tools.watchDog(`Save path to Memory.paths.${memoryName}`);
+                    }
+                }
+
+                return obj;
+            }
+
+        /**
+         *
+         * @param pos
+         */
+        const inspectPos = (pos) =>
+            (obj) => {
+                const x = pos.x;
+                const y = pos.y;
+
+                const candicates = [
+                    {x: x -1, y: y-1}, {x: x, y: y-1}, {x: x+1, y: y-1},
+                    {x: x -1, y: y},                   {x: x+1, y: y},
+                    {x: x -1, y: y+1}, {x: x, y: y+1}, {x: x+1, y: y+1},
+                ];
+
+
+            }
+
 
         const findFirstRoom = (obj) => {
             const room = _.reduce(obj.rooms, (result, room) => room, {});
@@ -61,15 +118,7 @@ var bootstrap = {
             return obj;
         };
 
-        const findPathToEnergySource0 = (obj) => {
-            obj.room.findPath
 
-        };
-
-        const findPathToRoomController = (obj) => {
-
-
-        };
 
         const createFirstContainer = (obj) => {
             const flag = Game.flags.Energy0;
@@ -92,11 +141,12 @@ var bootstrap = {
             findFirstRoom,
             findSources,
             createFlags('sources', 'Source'),
-            createFlags('spawns', 'Spawn'),
+            createFlags('spawns'),
+            calculateSourceWorkingPos(),
             createRoomControllerFlag,
+            findPath('Spawn1', 'Source0', undefined, 'PathSource0'),
+            findPath('Spawn1', 'RC', undefined, 'PathRC'),
             createFirstContainer,
-            findPathToEnergySource0,
-            findPathToRoomController,
             createFirstMiner,
         ];
 
