@@ -47,21 +47,57 @@ module.exports.loop = function () {
     //
     // // creepManager.changeRole(Game.creeps, 'harvester', 'upgrader', 2);
     //
-    // for(var name in Game.creeps) {
-    //     var creep = Game.creeps[name];
+    for(var name in Game.creeps) {
+        var creep = Game.creeps[name];
+
+        switch (role) {
+            case 'havester':
+                roleHarvester.run(creep);
+                break;
+
+            case 'mover':
+                roleMover.run(creep);
+                break;
+
+            case 'upgrader':
+                roleUpgrader.run(creep);
+                break;
+
+            case 'builder':
+                roleBuilder.run(creep);
+                break;
+
+            case 'repairer':
+                roleRepairer.run(creep);
+                break;
+        }
+
+    }
+
+    _.forEach(Game.spawns, (spawn) => {
+        creepManager.run(spawn);
+    });
+
+
+    // const createInitialCreeps = (obj) => {
     //
-    //     // creep.moveTo(11, 15);
-    //     if(creep.memory.role == 'harvester') {
-    //         roleHarvester.run(creep);
-    //     }
-    //     if(creep.memory.role == 'upgrader') {
-    //         roleUpgrader.run(creep);
-    //     }
-    //     if(creep.memory.role == 'builder') {
-    //         roleBuilder.run(creep);
-    //     }
-    //     if(creep.memory.role == 'repairer') {
-    //         roleRpairer.run(creep);
-    //     }
-    // }
+    //     console.log(`bootstrap: createInitialCreeps starts`);
+    //
+    //     var harvestLocation = obj.memory.sources[0].harvestPos[0];
+    //     var spawnLocation = obj.memory.spawn;
+    //
+    //     obj.creepManager.create('harvester', {
+    //         source: obj.sources[0],
+    //         at: harvestLocation,
+    //     });
+    //     // obj.creepManager.create('mover', {
+    //     //     from: harvestLocation,
+    //     //     to: spawnLocation,
+    //     // });
+    //
+    //     console.log(`bootstrap: createInitialCreeps completed`);
+    //
+    //     return obj;
+    // };
+
 }

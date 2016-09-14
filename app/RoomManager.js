@@ -140,7 +140,7 @@ const bootstrap = (RoomManagerObj) => {
 
         obj.spawn = spawn;
 
-        obj.memory.spawn = {
+        obj.room.memory.spawn = {
             name: spawn.name,
             x: spawn.pos.x,
             y: spawn.pos.y,
@@ -168,10 +168,10 @@ const bootstrap = (RoomManagerObj) => {
 
         obj.sources = sources;
 
-        obj.memory.sources = [];
+        obj.room.memory.sources = [];
 
         _.forEach(sources, (source, index) => {
-            obj.memory.sources[index] = {
+            obj.room.memory.sources[index] = {
                 x: source.pos.x,
                 y: source.pos.y,
             }
@@ -186,13 +186,13 @@ const bootstrap = (RoomManagerObj) => {
 
         console.log(`bootstrap: findAccessiblePosAroundSource starts`);
 
-        _.forEach(obj.memory.sources, (sourceHash, index) => {
+        _.forEach(obj.room.memory.sources, (sourceHash, index) => {
 
             const found = findAccessiblePos(obj.room, sourceHash);
 
-            obj.memory.sources[index].harvestPos = [];
+            obj.room.memory.sources[index].harvestPos = [];
             _.forEach(found, (pos) => {
-                obj.memory.sources[index].harvestPos.push(pos);
+                obj.room.memory.sources[index].harvestPos.push(pos);
             });
 
         });
@@ -225,27 +225,27 @@ const bootstrap = (RoomManagerObj) => {
     }
 
 
-
-    const createInitialCreeps = (obj) => {
-
-        console.log(`bootstrap: createInitialCreeps starts`);
-
-        var harvestLocation = obj.memory.sources[0].harvestPos[0];
-        var spawnLocation = obj.memory.spawn;
-
-        obj.creepManager.create('harvester', {
-            source: obj.sources[0],
-            at: harvestLocation,
-        });
-        // obj.creepManager.create('mover', {
-        //     from: harvestLocation,
-        //     to: spawnLocation,
-        // });
-
-        console.log(`bootstrap: createInitialCreeps completed`);
-
-        return obj;
-    };
+    //
+    // const createInitialCreeps = (obj) => {
+    //
+    //     console.log(`bootstrap: createInitialCreeps starts`);
+    //
+    //     var harvestLocation = obj.memory.sources[0].harvestPos[0];
+    //     var spawnLocation = obj.memory.spawn;
+    //
+    //     obj.creepManager.create('harvester', {
+    //         source: obj.sources[0],
+    //         at: harvestLocation,
+    //     });
+    //     // obj.creepManager.create('mover', {
+    //     //     from: harvestLocation,
+    //     //     to: spawnLocation,
+    //     // });
+    //
+    //     console.log(`bootstrap: createInitialCreeps completed`);
+    //
+    //     return obj;
+    // };
 
 
     const fns = [
@@ -260,7 +260,7 @@ const bootstrap = (RoomManagerObj) => {
         // findPath('Spawn1', 'RC', undefined, 'PathRC'),
         // createFirstContainer,
         // createFirstMiner,
-        createInitialCreeps,
+        // createInitialCreeps,
     ];
 
 
@@ -306,20 +306,11 @@ class RoomManager {
 
         this.creepManager = new CreepManager(this);
 
-        Memory.rooms[room.name] = {};
-
-        this.memory = Memory.rooms[room.name];
-
         console.log(`RoomManager: bootstrap starts`);
 
         bootstrap(this);
 
         console.log(`RoomManager: constructor completed`);
-    }
-
-
-    run() {
-        this.creepManager.run();
     }
 
 }

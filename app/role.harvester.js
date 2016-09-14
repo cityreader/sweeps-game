@@ -6,8 +6,8 @@ const roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
 
-        const creepSettings = roleManager.getCreepSettings(creep);
-        this.echo(creep, creepSettings);
+        // const creepSettings = roleManager.getCreepSettings(creep);
+        // this.echo(creep, creepSettings);
 
         if(creep.carry.energy < creep.carryCapacity) {
             var sources = creep.room.find(FIND_SOURCES);
