@@ -10,6 +10,10 @@ const roleHarvester = {
             this.bootstrap(creep);
         }
 
+        const sources =creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE, {filter: (s) => s.memory.taken == creep.name || s.memory.taken === undefined});
+
+
+
         // const creepSettings = roleManager.getCreepSettings(creep);
         // this.echo(creep, creepSettings);
 // console.log(`roleHarvester starts`);
@@ -44,43 +48,46 @@ const roleHarvester = {
     },
 
     bootstrap(creep) {
-        const mapWorkplace = (creep) => {
-            var workLocations = [];
 
-            _.forEach(Memory.rooms, (room) => {
-                if (room.spawn !== undefined && room.sources !== undefined) {
-                    let i = 0;
-                    let maxSourceNum = 2;
 
-                    room.sources.forEach((source) => {
-                        i += 1;
 
-                        if (source.harvestPos !== undefined) {
-                            workLocations = workLocations.concat(source.harvestPos)
-                        }
-
-                        if (i >= maxSourceNum) {
-                            return false;
-                        }
-
-                    });
-                }
-            });
-
-            console.log(`workLocations ${workLocations.length}`);
-
-            workLocations.forEach((location) => {
-                if (location.creepId === undefined) {
-                    location.creepId = creep.id;
-                    creep.memory.mapWorkplace = true;
-                    return false;
-                }
-            })
-        }
-
-        if (creep.memory.mapWorkplace === undefined) {
-            mapWorkplace(creep);
-        }
+        // const mapWorkplace = (creep) => {
+        //     var workLocations = [];
+        //
+        //     _.forEach(Memory.rooms, (room) => {
+        //         if (room.spawn !== undefined && room.sources !== undefined) {
+        //             let i = 0;
+        //             let maxSourceNum = 2;
+        //
+        //             room.sources.forEach((source) => {
+        //                 i += 1;
+        //
+        //                 if (source.harvestPos !== undefined) {
+        //                     workLocations = workLocations.concat(source.harvestPos)
+        //                 }
+        //
+        //                 if (i >= maxSourceNum) {
+        //                     return false;
+        //                 }
+        //
+        //             });
+        //         }
+        //     });
+        //
+        //     console.log(`workLocations ${workLocations.length}`);
+        //
+        //     workLocations.forEach((location) => {
+        //         if (location.creepId === undefined) {
+        //             location.creepId = creep.id;
+        //             creep.memory.mapWorkplace = true;
+        //             return false;
+        //         }
+        //     })
+        // }
+        //
+        // if (creep.memory.mapWorkplace === undefined) {
+        //     mapWorkplace(creep);
+        // }
 
 
 

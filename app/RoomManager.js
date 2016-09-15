@@ -1,5 +1,5 @@
 var tools = require('tools');
-var CreepManager = require('CreepManager');
+// var CreepManager = require('CreepManager');
 
 // "use strict";
 
@@ -45,56 +45,56 @@ const ruleFindInaccessibleLook = (result, lookObject) => {
  * ===============================================
  */
 
-const bootstrap = (RoomManagerObj) => {
-    tools.watchDog('bootstrap is started');
+const bootstrap = (room) => {
+    // tools.watchDog('bootstrap is started');
 
-    /**
-     * Currying function to create flags.
-     *
-     * @param keyName
-     * @param prefix
-     */
-    const createFlags = (keyName, prefix = '') =>
-        (obj) => {
-            _.map(obj[keyName], (target, index) => {
-                let flagName = `${prefix}${index}`;
-                let colors = tools.getRandomColors(2);
-
-                const result = obj.room.createFlag(target.pos, flagName, colors[0], colors[1]);
-
-                if (result == OK) {
-                    tools.watchDog(`Create new flag ${flagName}`);
-                }
-            });
-
-            return obj;
-        }
-
-    /**
-     * Currying function to find path of two pos.
-     *
-     * @param flag1
-     * @param flag2
-     * @param opts
-     * @param memoryName
-     */
-    const findPath = (flag1, flag2, opts, memoryName = '') =>
-        (obj) => {
-            console.log(`${flag1} ${flag2}`);
-            console.log(`${flag1} ${flag2}`);
-            const result = obj.room.findPath(obj.flags[flag1].pos, obj.flags[flag2].pos, opts);
-            if (result) {
-                tools.watchDog(`Find path from ${flag1} to ${flag1}`);
-
-                if (memoryName != '') {
-                    makeParent('paths', Memory);
-                    Memory.paths[memoryName] = result;
-                    tools.watchDog(`Save path to Memory.paths.${memoryName}`);
-                }
-            }
-
-            return obj;
-        }
+    // /**
+    //  * Currying function to create flags.
+    //  *
+    //  * @param keyName
+    //  * @param prefix
+    //  */
+    // const createFlags = (keyName, prefix = '') =>
+    //     (obj) => {
+    //         _.map(obj[keyName], (target, index) => {
+    //             let flagName = `${prefix}${index}`;
+    //             let colors = tools.getRandomColors(2);
+    //
+    //             const result = obj.room.createFlag(target.pos, flagName, colors[0], colors[1]);
+    //
+    //             if (result == OK) {
+    //                 tools.watchDog(`Create new flag ${flagName}`);
+    //             }
+    //         });
+    //
+    //         return obj;
+    //     }
+    //
+    // /**
+    //  * Currying function to find path of two pos.
+    //  *
+    //  * @param flag1
+    //  * @param flag2
+    //  * @param opts
+    //  * @param memoryName
+    //  */
+    // const findPath = (flag1, flag2, opts, memoryName = '') =>
+    //     (obj) => {
+    //         console.log(`${flag1} ${flag2}`);
+    //         console.log(`${flag1} ${flag2}`);
+    //         const result = obj.room.findPath(obj.flags[flag1].pos, obj.flags[flag2].pos, opts);
+    //         if (result) {
+    //             tools.watchDog(`Find path from ${flag1} to ${flag1}`);
+    //
+    //             if (memoryName != '') {
+    //                 makeParent('paths', Memory);
+    //                 Memory.paths[memoryName] = result;
+    //                 tools.watchDog(`Save path to Memory.paths.${memoryName}`);
+    //             }
+    //         }
+    //
+    //         return obj;
+    //     }
 
     /**
      *
@@ -110,7 +110,7 @@ const bootstrap = (RoomManagerObj) => {
             {x: x -1, y: y+1}, {x: x, y: y+1}, {x: x+1, y: y+1},
         ];
 
-        const found = targets.reduce((keenTargets, target) => {
+        const total = targets.reduce((count, target) => {
 
             const look = room.lookAt(target.x, target.y);
 
@@ -120,36 +120,36 @@ const bootstrap = (RoomManagerObj) => {
 
             // There is no wall or lava ^_^
             if (result.length == 0) {
-                keenTargets.push(target);
+                // keenTargets.push(target);
             }
 
-            return keenTargets;
+            return count + 1;
 
-        }, []);
+        }, 0);
 
-        return found;
+        return total;
     }
 
 
-    const findSpawn = (obj) => {
-
-        console.log(`bootstrap: findSpawn starts`);
-
-        const spawns = obj.room.find(FIND_MY_SPAWNS);
-        const spawn = spawns.shift();
-
-        obj.spawn = spawn;
-
-        obj.room.memory.spawn = {
-            name: spawn.name,
-            x: spawn.pos.x,
-            y: spawn.pos.y,
-        }
-
-        console.log(`bootstrap: findSpawn completed`);
-
-        return obj;
-    }
+    // const findSpawn = (obj) => {
+    //
+    //     console.log(`bootstrap: findSpawn starts`);
+    //
+    //     const spawns = obj.room.find(FIND_MY_SPAWNS);
+    //     const spawn = spawns.shift();
+    //
+    //     obj.spawn = spawn;
+    //
+    //     obj.room.memory.spawn = {
+    //         name: spawn.name,
+    //         x: spawn.pos.x,
+    //         y: spawn.pos.y,
+    //     }
+    //
+    //     console.log(`bootstrap: findSpawn completed`);
+    //
+    //     return obj;
+    // }
 
 
     // const findFirstRoom = (obj) => {
@@ -160,41 +160,43 @@ const bootstrap = (RoomManagerObj) => {
     //     return Object.assign({}, obj, {room});
     // };
 
-    const findSources = (obj) => {
-
-        console.log(`bootstrap: findSources starts`);
-
-        const sources = obj.room.find(FIND_SOURCES);
-
-        obj.sources = sources;
-
-        obj.room.memory.sources = [];
-
-        _.forEach(sources, (source, index) => {
-            obj.room.memory.sources[index] = {
-                x: source.pos.x,
-                y: source.pos.y,
-            }
-        });
-
-        console.log(`bootstrap: findSources completed`);
-
-        return obj;
-    }
+    // const findSources = (obj) => {
+    //
+    //     console.log(`bootstrap: findSources starts`);
+    //
+    //     const sources = obj.room.find(FIND_SOURCES);
+    //
+    //     obj.sources = sources;
+    //
+    //     obj.room.memory.sources = [];
+    //
+    //     _.forEach(sources, (source, index) => {
+    //         obj.room.memory.sources[index] = {
+    //             x: source.pos.x,
+    //             y: source.pos.y,
+    //         }
+    //     });
+    //
+    //     console.log(`bootstrap: findSources completed`);
+    //
+    //     return obj;
+    // }
 
     const findAccessiblePosAroundSource = (obj) => {
 
         console.log(`bootstrap: findAccessiblePosAroundSource starts`);
 
-        _.forEach(obj.room.memory.sources, (sourceHash, index) => {
+        const sources = obj.room.find(FIND_SOURCES);
 
-            const found = findAccessiblePos(obj.room, sourceHash);
+        console.log(`sources ${sources}`);
 
-            obj.room.memory.sources[index].harvestPos = [];
-            _.forEach(found, (pos) => {
-                obj.room.memory.sources[index].harvestPos.push(pos);
-            });
+        _.forEach(sources, (source) => {
+            const total = findAccessiblePos(obj.room, source.pos);
 
+            source.memory.capacity = total;
+            source.memory.works = new Set();
+
+            console.log(`total ${total}`);
         });
 
         console.log(`bootstrap: findAccessiblePosAroundSource completed`);
@@ -214,15 +216,15 @@ const bootstrap = (RoomManagerObj) => {
 
 
 
-    const createFirstContainer = (obj) => {
-        const flag = Game.flags.Energy0;
-        // const result = obj.room.createConstructionSite(flag.pos, STRUCTURE_CONTAINER);
-        // if (result == OK) {
-        //     tools.watchDog(`Create new container`);
-        // }
-
-        return obj;
-    }
+    // const createFirstContainer = (obj) => {
+    //     const flag = Game.flags.Energy0;
+    //     // const result = obj.room.createConstructionSite(flag.pos, STRUCTURE_CONTAINER);
+    //     // if (result == OK) {
+    //     //     tools.watchDog(`Create new container`);
+    //     // }
+    //
+    //     return obj;
+    // }
 
 
     //
@@ -248,26 +250,27 @@ const bootstrap = (RoomManagerObj) => {
     // };
 
 
-    const fns = [
-        // findFirstRoom,
-        findSpawn,
-        findSources,
-        // createFlags('sources', 'Source'),
-        // createFlags('spawns'),
-        findAccessiblePosAroundSource,
-        // createRoomControllerFlag,
-        // findPath('Spawn1', 'Source0', undefined, 'PathSource0'),
-        // findPath('Spawn1', 'RC', undefined, 'PathRC'),
-        // createFirstContainer,
-        // createFirstMiner,
-        // createInitialCreeps,
-    ];
+    // const fns = [
+    //     // findFirstRoom,
+    //     findSpawn,
+    //     // findSources,
+    //     // createFlags('sources', 'Source'),
+    //     // createFlags('spawns'),
+    //     findAccessiblePosAroundSource,
+    //     // createRoomControllerFlag,
+    //     // findPath('Spawn1', 'Source0', undefined, 'PathSource0'),
+    //     // findPath('Spawn1', 'RC', undefined, 'PathRC'),
+    //     // createFirstContainer,
+    //     // createFirstMiner,
+    //     // createInitialCreeps,
+    // ];
 
+    findAccessiblePosAroundSource(room);
 
-    const processing = compose(fns);
-
-
-    processing(RoomManagerObj);
+    // const processing = compose(fns);
+    //
+    //
+    // processing(RoomManagerObj);
 
 
     // const room = findFirstRoom(Game.rooms);
@@ -299,16 +302,9 @@ const bootstrap = (RoomManagerObj) => {
 class RoomManager {
 
     constructor(room) {
-
         console.log(`RoomManager: constructor starts`);
 
-        this.room = room;
-
-        this.creepManager = new CreepManager(this);
-
-        console.log(`RoomManager: bootstrap starts`);
-
-        bootstrap(this);
+        bootstrap(room);
 
         console.log(`RoomManager: constructor completed`);
     }
