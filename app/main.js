@@ -5,6 +5,7 @@ var tools = require('tools');
 var ai = require('ai');
 
 var roleHarvester = require('role.harvester');
+var roleMover = require('role.mover');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleRpairer = require('role.repairer');
@@ -47,11 +48,10 @@ module.exports.loop = function () {
     //
     // // creepManager.changeRole(Game.creeps, 'harvester', 'upgrader', 2);
     //
-    for(var name in Game.creeps) {
-        var creep = Game.creeps[name];
-
-        switch (role) {
-            case 'havester':
+    _.forEach(Game.creeps, (creep) => {
+        console.log(`creep.memory.role ${creep.memory.role}`);
+        switch (creep.memory.role) {
+            case 'harvester':
                 roleHarvester.run(creep);
                 break;
 
@@ -72,7 +72,7 @@ module.exports.loop = function () {
                 break;
         }
 
-    }
+    });
 
     _.forEach(Game.spawns, (spawn) => {
         creepManager.run(spawn);

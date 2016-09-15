@@ -1,4 +1,4 @@
-const maxCreepNum = 1;
+var defaultMaxCreepNum = 2;
 
 const roleSettings = {
     harvester : {
@@ -8,13 +8,13 @@ const roleSettings = {
         ],
         max: 3,
     },
-    // mover : {
-    //     weight: 0.2,
-    //     body: [
-    //         [CARRY, MOVE],
-    //     ],
-    //     max: 3,
-    // },
+    mover : {
+        weight: 0.2,
+        body: [
+            [CARRY, MOVE],
+        ],
+        max: 3,
+    },
     // upgrader : {
     //     weight: 0.2,
     //     body: [
@@ -40,137 +40,210 @@ const roleSettings = {
 
 var creepManager = {
 
-    run: function(spawn) {
+    run: function (spawn) {
+
         this.spawn = spawn;
 
-        const targetCountRoles = this.calculateTargetNum();
-        const currentCountRoles = this.calculateCurrentNum();
+        this.keep();
+    },
+
+    keep: function() {
+
+        const panOutTargetNum = (getNoCapRoles, map, total, maxCreepNum) => {
+
+            _.forEach(getNoCapRoles, (settings, role) => {
+                map.set(role, map.get(role) + 1);
+                total++;
+
+                if (total >= maxCreepNum) {
+                    return false;
+                }
+            });
+
+            return (total >= maxCreepNum) ? map : panOutTargetNum(getNoCapRoles, map, total, maxCreepNum);
+        }
+
+        const calculateTargetNum = (getNoCapRoles) => {
+            let map = new Map();
+            let total = 0;
+
+            _.forEach(roleSettings, (settings, role) => {
+
+                let num = Math.ceil(defaultMaxCreepNum * settings.weight);
+
+                if (settings.max !== undefined && num > settings.max ) {
+                    num = settings.max;
+                }
+
+                map.set(role, num);
+                total += num;
+            });
+
+            if (getNoCapRoles.length > 0) {
+                map = panOutTargetNum(getNoCapRoles);
+            }
+
+            return map;
+        }
+
+        const calculateCurrentNum = (roleNames) => {
+            let map = new Map();
+
+            roleNames.forEach((role) => {
+                map.set(role, 0);
+            })
+
+            _.forEach(Game.creeps, (creep) => {
+
+                let role = creep.memory.role;
+                map.set(role, map.get(role) + 1);
+
+            });
+
+            return map;
+        }
+
+        const getCreepMaxNum = (targetCountRoles) => {
+            let maxNum = 0;
+
+            for (let entry of targetCountRoles) {
+                maxNum += entry[1];
+            }
+
+            return maxNum;
+        }
+
+        const createNextCreep = (targetCountRoles, currentCountRoles, roleNames, creepMaxNum, totalCreepNum) => {
+            // console.log(`createNextCreep starts`)
+
+            var result;
+
+            for (let entry of targetCountRoles) {
+                let role = entry[0];
+
+                // console.log(`Memory.rolePriority ${Memory.rolePriority}`);
+                // console.log(`role ${role}`);
+                // console.log(`roleNames ${roleNames.join(', ')}`);
+
+                if (roleNames[Memory.rolePriority] === role) {
+                    console.log(`find role ${role}`);
+                    Memory.rolePriority++;
+                    if (Memory.rolePriority == roleNames.length) {
+                        Memory.rolePriority = 0;
+                    }
+
+                    // console.log(`Memory.rolePriority2 ${Memory.rolePriority}`);
+
+                    let targetNum = entry[1];
+                    let currentNum = currentCountRoles.get(role);
+
+                    // console.log(`targetNum ${targetNum}`);
+                    // console.log(`currentNum ${currentNum}`);
+
+                    if (currentNum < targetNum) {
+                        result = this.createCreep(role);
+
+                        if (result !== false ) {
+                            currentCountRoles.set(role, currentCountRoles.get(role) + 1);
+                            totalCreepNum += 1;
+                        }
+
+                        break;
+                    }
+
+                }
+            }
+
+            // console.log(`result ${result}`);
+            // console.log(`totalCreepNum ${totalCreepNum}`);
+            // console.log(`creepMaxNum ${creepMaxNum}`);
+
+            if (result === false) {
+                return;
+            }
+            else if (totalCreepNum < creepMaxNum) {
+                createNextCreep(targetCountRoles, currentCountRoles, roleNames, creepMaxNum, totalCreepNum);
+            }
+
+        }
+
+        const roleNames = _.map(roleSettings, (settings, role) => role);
+        const getNoCapRoles = _.filter(roleSettings, (settings, role) => settings.max === undefined);
+        var targetCountRoles = calculateTargetNum(getNoCapRoles);
+        var currentCountRoles = calculateCurrentNum(roleNames);
+        const creepMaxNum = getCreepMaxNum(targetCountRoles);
+
+        // console.log(`currentCountRoles.size ${currentCountRoles.size}`)
+
+
+        var totalCreepNum = Object.keys(Game.creeps).length;
 
         if (Memory.rolePriority === undefined) {
             Memory.rolePriority = 0;
         }
 
-        console.log(`Object.keys(Game.creeps).length ${Object.keys(Game.creeps).length}`)
+        // console.log(`maxCreepNum ${defaultMaxCreepNum}`);
+        // console.log(`totalCreepNum ${totalCreepNum}`);
+        // console.log(`Memory.rolePriority ${Memory.rolePriority}`);
 
-        var currentCount = 0;
-        _.forEach(Game.creeps, (creep) => {
-            currentCount++;
-        });
+        // return;
 
-        var roleTypeCount = 0;
-        _.forEach(targetCountRoles, (role) => {
-            roleTypeCount++;
-        });
+        createNextCreep(targetCountRoles, currentCountRoles, roleNames, creepMaxNum, totalCreepNum);
 
-        console.log(`currentCount ${currentCount}`);
-        console.log(`maxCreepNum ${maxCreepNum}`);
-        console.log(`Memory.rolePriority ${Memory.rolePriority}`);
 
-        while (currentCount < maxCreepNum) {
-
-            let pointer = 0;
-
-            _.forEach(targetCountRoles, (_targetCount, role) => {
-
-                if ( pointer === Memory.rolePriority ) {
-
-                    console.log();
-
-                    let _currentCount = currentCountRoles[role];
-
-                    if ( _currentCount < _targetCount ) {
-                        const result = this.createCreep(role);
-
-                        if (result === false) {
-                            currentCount++;
-                            return false;
-                        }
-
-                        const newName = spawn.createCreep(body, name, {role, model});
-                        console.log(`New ${role} creep is created, name: ${newName}.`);
-
-                        currentCount++;
-
-                        if (currentCount >= maxCreepNum) {
-                            return false;
-                        }
-
-                    }
-
-                }
-
-                pointer++;
-
-                if (pointer >= roleTypeCount) {
-                    pointer = 0;
-                }
-            });
-
-        }
-
-        Memory.rolePriority = pointer;
+        //
+        // while (currentCount < defaultMaxCreepNum) {
+        //
+        //     let pointer = 0;
+        //
+        //     _.forEach(targetCountRoles, (_targetCount, role) => {
+        //
+        //         if ( pointer === Memory.rolePriority ) {
+        //
+        //             console.log();
+        //
+        //             let _currentCount = currentCountRoles[role];
+        //
+        //             if ( _currentCount < _targetCount ) {
+        //                 const result = this.createCreep(role);
+        //
+        //                 if (result === false) {
+        //                     currentCount++;
+        //                     return false;
+        //                 }
+        //
+        //                 const newName = spawn.createCreep(body, name, {role, model});
+        //                 console.log(`New ${role} creep is created, name: ${newName}.`);
+        //
+        //                 currentCount++;
+        //
+        //                 if (currentCount >= defaultMaxCreepNum) {
+        //                     return false;
+        //                 }
+        //
+        //             }
+        //
+        //         }
+        //
+        //         pointer++;
+        //
+        //         if (pointer >= roleTypeCount) {
+        //             pointer = 0;
+        //         }
+        //     });
+        //
+        // }
+        //
+        // Memory.rolePriority = pointer;
     },
 
-    calculateTargetNum: function() {
-        var countRoles = {};
-        var total = 0;
 
-        _.forEach(roleSettings, (settings, role) => {
-
-            let num = Math.ceil(maxCreepNum * settings.weight);
-
-            if (settings.max !== undefined && num > settings.max ) {
-                num = settings.max;
-            }
-
-            countRoles[role] = num;
-
-            total += num;
-
-        });
-
-        while (total < maxCreepNum) {
-
-            _.forEach(roleSettings, (settings, role) => {
-
-                if (settings.max === undefined) {
-                    countRoles[role]++;
-                    total++;
-                }
-
-                if (total >= maxCreepNum) {
-                    return false;
-                }
-
-            });
-        }
-
-        return countRoles;
-    },
-
-    calculateCurrentNum() {
-
-        var countRoles = {};
-
-        _.forEach(Game.creeps, (creep) => {
-
-            let role = creep.memory.role;
-
-            if (countRoles[role] === undefined) {
-                countRoles[role] = 1;
-            }
-            else {
-                countRoles[role]++;
-            }
-
-        });
-
-        return countRoles;
-    },
 
     createCreep(role) {
 
-        const result = spawn.canCreateCreep(body);
+        const body = this.getBody(role);
+
+        const result = this.spawn.canCreateCreep(body);
 
         if (result == OK) {
             const newName = this.spawn.createCreep(body, undefined, {role});
@@ -192,6 +265,10 @@ var creepManager = {
             return false;
         }
 
+    },
+
+    getBody(role) {
+        return roleSettings[role].body[0];
     },
 
     // keep(creeps, role, settings) {
