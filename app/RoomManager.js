@@ -119,11 +119,11 @@ const bootstrap = (room) => {
             const result = filterInaccessibleLook(look);
 
             // There is no wall or lava ^_^
-            if (result.length == 0) {
-                // keenTargets.push(target);
+            if (result.length === 0) {
+                count += 1
             }
 
-            return count + 1;
+            return count;
 
         }, 0);
 
@@ -182,26 +182,32 @@ const bootstrap = (room) => {
     //     return obj;
     // }
 
-    const findAccessiblePosAroundSource = (obj) => {
+    const findAccessiblePosAroundSource = (room) => {
 
         console.log(`bootstrap: findAccessiblePosAroundSource starts`);
 
-        const sources = obj.room.find(FIND_SOURCES);
+        let sources = room.find(FIND_SOURCES);
 
         console.log(`sources ${sources}`);
 
-        _.forEach(sources, (source) => {
-            const total = findAccessiblePos(obj.room, source.pos);
+        if (Memory.sources === undefined) {
+            Memory.sources = {};
+        }
 
-            source.memory.capacity = total;
-            source.memory.works = new Set();
+        _.forEach(sources, (source) => {
+            const total = findAccessiblePos(room, source.pos);
+
+            const data = {
+                capacity: total,
+                workers: [],
+            }
+
+            Memory.sources[source.id] = data;
 
             console.log(`total ${total}`);
         });
 
         console.log(`bootstrap: findAccessiblePosAroundSource completed`);
-
-        return obj;
     }
 
     // const createRoomControllerFlag = (obj) => {

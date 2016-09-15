@@ -6,22 +6,15 @@ const roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
 
-        if (creep.memory.bootstrap === undefined) {
+        if (creep.memory.booted === undefined) {
             this.bootstrap(creep);
         }
 
-        const sources =creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE, {filter: (s) => s.memory.taken == creep.name || s.memory.taken === undefined});
-
-
-
-        // const creepSettings = roleManager.getCreepSettings(creep);
-        // this.echo(creep, creepSettings);
-// console.log(`roleHarvester starts`);
         if(creep.carry.energy < creep.carryCapacity) {
             // creep.say('harvesting');
-            var sources = creep.room.find(FIND_SOURCES);
-            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0]);
+            var target =  Game.getObjectById(creep.memory.sourceId);
+            if(creep.harvest(target) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
             }
         }
         else {
@@ -49,52 +42,32 @@ const roleHarvester = {
 
     bootstrap(creep) {
 
+        if (creep.memory.sourceId === undefined) {
+            var sources = creep.room.find(FIND_SOURCES);
 
+            sources = _.filter(sources, (source) => {
+                console.log(`source.id ${source.id}`);
+                let memory = Memory.sources[source.id];
 
-        // const mapWorkplace = (creep) => {
-        //     var workLocations = [];
-        //
-        //     _.forEach(Memory.rooms, (room) => {
-        //         if (room.spawn !== undefined && room.sources !== undefined) {
-        //             let i = 0;
-        //             let maxSourceNum = 2;
-        //
-        //             room.sources.forEach((source) => {
-        //                 i += 1;
-        //
-        //                 if (source.harvestPos !== undefined) {
-        //                     workLocations = workLocations.concat(source.harvestPos)
-        //                 }
-        //
-        //                 if (i >= maxSourceNum) {
-        //                     return false;
-        //                 }
-        //
-        //             });
-        //         }
-        //     });
-        //
-        //     console.log(`workLocations ${workLocations.length}`);
-        //
-        //     workLocations.forEach((location) => {
-        //         if (location.creepId === undefined) {
-        //             location.creepId = creep.id;
-        //             creep.memory.mapWorkplace = true;
-        //             return false;
-        //         }
-        //     })
-        // }
-        //
-        // if (creep.memory.mapWorkplace === undefined) {
-        //     mapWorkplace(creep);
-        // }
+                console.log(`memory.workers.length ${memory.workers.length}`);
+                console.log(`memory.capacity ${memory.capacity}`);
+                return memory.workers.length < memory.capacity;
+            })
 
+            _.forEach(sources, (source) => {
+                console.log(`2 source.id ${source}`);
+                console.log(`source ${Object.keys(source).join(', ')}`)
+                var memory = Memory.sources[source.id];
+                console.log(`memory ${Object.keys(memory).join(', ')}`)
+                memory.workers.push(creep.id);
+                creep.memory.sourceId = source.id;
+                return false;
+            });
+        }
 
+        creep.memory.booted = true;
 
-        // creep.memory.bootstrap = true;
     }
-
-    // echo: (creep, creepSettings) => {creepSettings.echo && creep.say(`${creepSettings.model} ${role}`)}
 
 };
 

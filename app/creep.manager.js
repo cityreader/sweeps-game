@@ -1,4 +1,4 @@
-var defaultMaxCreepNum = 2;
+var defaultMaxCreepNum = 8;
 
 const roleSettings = {
     harvester : {
