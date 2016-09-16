@@ -1,3 +1,4 @@
+const creepManager = require('creep.manager');
 // const roleManager = require('role.manager');
 const role = 'harvester';
 
@@ -6,15 +7,20 @@ const roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
 
-        if (creep.memory.booted === undefined) {
-            this.bootstrap(creep);
-        }
+        this.bootstrap(creep);
+
+        this.checkHealth(creep);
 
         if(creep.carry.energy < creep.carryCapacity) {
             // creep.say('harvesting');
             var target =  Game.getObjectById(creep.memory.sourceId);
             if(creep.harvest(target) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
+            }
+            else {
+                if (creep.memory.moveTicks === undefined) {
+                    creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
+                }
             }
         }
         else {
@@ -38,6 +44,7 @@ const roleHarvester = {
             //     }
             // }
         }
+
     },
 
     bootstrap(creep) {
@@ -65,8 +72,23 @@ const roleHarvester = {
             });
         }
 
-        creep.memory.booted = true;
 
+        if (creep.memory.fullTicks) {
+            creep.memory.fullTicks = creep.ticksToLive;
+        }
+    },
+
+    checkHealth(creep) {
+        const createTicks = 20;
+
+        if (creep.ticksTolive <= creep.memory.moveTicks + createTicks) {
+            Memory.sources[creep.memory.sourceId].delete(creep.id);
+
+            const spawns = creep.room.find(FIND_MY_SPAWNS);
+
+            const creepManager = new CreepManager(spawns[0]);
+            creepManager.createCreep(creep.memory.role);
+        }
     }
 
 };
