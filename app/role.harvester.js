@@ -1,5 +1,4 @@
 const creepManager = require('creep.manager');
-// const roleManager = require('role.manager');
 const role = 'harvester';
 
 const roleHarvester = {

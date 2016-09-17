@@ -1,13 +1,9 @@
-const roleManager = require('role.manager');
 const role = 'repairer';
 
 const roleRepairer = {
 
         /** @param {Creep} creep **/
         run: function(creep) {
-
-            const creepSettings = roleManager.getCreepSettings(creep);
-            this.echo(creep, creepSettings);
 
             if(creep.memory.building && creep.carry.energy == 0) {
                 creep.memory.building = false;
@@ -41,8 +37,6 @@ const roleRepairer = {
                 }
             }
         },
-
-        echo: (creep, creepSettings) => {creepSettings.echo && creep.say(`${creepSettings.model} ${role}`)}
 
 };
 

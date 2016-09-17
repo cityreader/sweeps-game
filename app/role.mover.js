@@ -1,4 +1,3 @@
-// const roleManager = require('role.manager');
 const role = 'mover';
 
 const roleMover = {

@@ -1,5 +1,3 @@
-var gameSettings = require('game.settings');
-
 var tools = require('tools');
 
 var ai = require('ai');
@@ -40,8 +38,6 @@ Object.defineProperty(Source.prototype, 'memory', {
    }
 });
 
-
-
 module.exports.loop = function () {
 
     ai.run();
@@ -64,18 +60,11 @@ module.exports.loop = function () {
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
             delete Memory.creeps[name];
-            console.log('Clearing non-existing creep memory:', name);
+            // console.log('Clearing non-existing creep memory:', name);
         }
     }
 
-    // creepManager.manageCreeps(gameSettings);
-    //
-    // roomBuildingManager.run(spawn1.room);
-    //
-    // // creepManager.changeRole(Game.creeps, 'harvester', 'upgrader', 2);
-    //
     _.forEach(Game.creeps, (creep) => {
-        console.log(`creep.memory.role ${creep.memory.role}`);
         switch (creep.memory.role) {
             case 'harvester':
                 roleHarvester.run(creep);
@@ -104,27 +93,5 @@ module.exports.loop = function () {
     _.forEach(Game.spawns, (spawn) => {
         creepManager.run(spawn);
     });
-
-
-    // const createInitialCreeps = (obj) => {
-    //
-    //     console.log(`bootstrap: createInitialCreeps starts`);
-    //
-    //     var harvestLocation = obj.memory.sources[0].harvestPos[0];
-    //     var spawnLocation = obj.memory.spawn;
-    //
-    //     obj.creepManager.create('harvester', {
-    //         source: obj.sources[0],
-    //         at: harvestLocation,
-    //     });
-    //     // obj.creepManager.create('mover', {
-    //     //     from: harvestLocation,
-    //     //     to: spawnLocation,
-    //     // });
-    //
-    //     console.log(`bootstrap: createInitialCreeps completed`);
-    //
-    //     return obj;
-    // };
 
 }

@@ -134,12 +134,11 @@ const creepManager = {
 
             var result;
 
-            for (let entry of targetRoleMap) {
+            for (const entry of targetRoleMap) {
                 let role = entry[0];
 
                 console.log(`Memory.rolePriority ${Memory.rolePriority}`);
                 console.log(`role ${role}`);
-                console.log(`roleNames ${roleNames.join(', ')}`);
                 console.log(`currentCountRoles.get(${role}) ${currentRoleMap.get(role)}`);
 
 
