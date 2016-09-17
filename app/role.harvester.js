@@ -86,8 +86,8 @@ const roleHarvester = {
 
             const spawns = creep.room.find(FIND_MY_SPAWNS);
 
-            const creepManager = new CreepManager(spawns[0]);
-            creepManager.createCreep(creep.memory.role);
+
+            creepManager.createCreep(spawns[0], creep.memory.role);
         }
     }
 

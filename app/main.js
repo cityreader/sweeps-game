@@ -10,7 +10,7 @@ var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleRpairer = require('role.repairer');
 
-var CreepManager = require('creep.manager');
+var creepManager = require('creep.manager');
 
 var roomBuildingManager = require('room.building.manager');
 
@@ -74,9 +74,9 @@ module.exports.loop = function () {
 
     });
 
+
     _.forEach(Game.spawns, (spawn) => {
-        const creepManager = new CreepManager(spawn);
-        creepManager.run();
+        creepManager.run(spawn);
     });
 
 
