@@ -12,9 +12,35 @@ var roleRpairer = require('role.repairer');
 
 var creepManager = require('creep.manager');
 
-var roomBuildingManager = require('room.building.manager');
+Object.defineProperty(Source.prototype, 'memory', {
+   get() {
+        if (_.isUndefined(Memory.sources)) {
+            Memory.sources = {};
+        }
 
-const spawn1 = Game.spawns['Spawn1'];
+        if (!_.isObject(Memory.sources)) {
+            return undefined;
+        }
+
+        Memory.sources[this.id] = Memory.sources[this.id] || {};
+
+        return Memory.sources[this.id];
+   },
+
+   set(value) {
+       if (_.isUndefined(Memory.sources)) {
+           Memory.sources = {}
+       }
+
+       if (!_.isObject(Memory.sources)) {
+           throw new Error('Could not set source memory');
+       }
+
+       Memory.sources[this.id] = value;
+   }
+});
+
+
 
 module.exports.loop = function () {
 

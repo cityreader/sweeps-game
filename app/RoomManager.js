@@ -183,16 +183,7 @@ const bootstrap = (room) => {
     // }
 
     const findAccessiblePosAroundSource = (room) => {
-
-        console.log(`bootstrap: findAccessiblePosAroundSource starts`);
-
-        let sources = room.find(FIND_SOURCES);
-
-        console.log(`sources ${sources}`);
-
-        if (Memory.sources === undefined) {
-            Memory.sources = {};
-        }
+        var sources = room.find(FIND_SOURCES);
 
         _.forEach(sources, (source) => {
             const total = findAccessiblePos(room, source.pos);
@@ -200,14 +191,11 @@ const bootstrap = (room) => {
             const data = {
                 capacity: total,
                 workers: [],
+                max: false,
             }
 
-            Memory.sources[source.id] = data;
-
-            console.log(`total ${total}`);
+            source.memory = data;
         });
-
-        console.log(`bootstrap: findAccessiblePosAroundSource completed`);
     }
 
     // const createRoomControllerFlag = (obj) => {
