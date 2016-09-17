@@ -1,11 +1,9 @@
 const creepManager = require('creep.manager');
-const role = 'harvester';
 
 const roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-
         this.bootstrap(creep);
 
         this.checkHealth(creep);
@@ -17,7 +15,7 @@ const roleHarvester = {
                 creep.moveTo(target);
             }
             else {
-                if (creep.memory.moveTicks === undefined) {
+                if (_.isUndefined(creep.memory.moveTicks)) {
                     creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
                 }
             }
@@ -48,46 +46,42 @@ const roleHarvester = {
 
     bootstrap(creep) {
 
-        if (creep.memory.sourceId === undefined) {
+        if (_.isUndefined(creep.memory.sourceId)) {
             var sources = creep.room.find(FIND_SOURCES);
 
             sources = _.filter(sources, (source) => {
-                console.log(`source.id ${source.id}`);
                 let memory = Memory.sources[source.id];
-
-                console.log(`memory.workers.length ${memory.workers.length}`);
-                console.log(`memory.capacity ${memory.capacity}`);
                 return memory.workers.length < memory.capacity;
             })
 
             _.forEach(sources, (source) => {
-                console.log(`2 source.id ${source}`);
-                console.log(`source ${Object.keys(source).join(', ')}`)
-                var memory = Memory.sources[source.id];
-                console.log(`memory ${Object.keys(memory).join(', ')}`)
-                memory.workers.push(creep.id);
+                source.memory.workers.push(creep.id);
                 creep.memory.sourceId = source.id;
                 return false;
             });
         }
 
 
-        if (creep.memory.fullTicks) {
+        if (_.isUndefined(creep.memory.fullTicks)) {
             creep.memory.fullTicks = creep.ticksToLive;
         }
     },
 
     checkHealth(creep) {
-        const createTicks = 20;
+        const ticksToBuild = this.ticksToBuild(creep);
 
-        if (creep.ticksTolive <= creep.memory.moveTicks + createTicks) {
-            Memory.sources[creep.memory.sourceId].delete(creep.id);
+        if (creep.ticksTolive <= creep.memory.moveTicks + ticksToBuild) {
+            const source = Game.getObjectById(creep.memory.sourceId);
+            source.memory.workers = source.workers.filter(creepId => creepId != creep.id);
 
             const spawns = creep.room.find(FIND_MY_SPAWNS);
-
-
             creepManager.createCreep(spawns[0], creep.memory.role);
         }
+    },
+
+    ticksToBuild(creep) {
+        const spawnTime = 3;
+        return creep.body.length * spawnTime;
     }
 
 };

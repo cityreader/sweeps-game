@@ -1,3 +1,5 @@
+const Role = require('Role');
+
 var defaultMaxCreepNum = 9;
 
 const roleSettings = {
@@ -38,213 +40,227 @@ const roleSettings = {
     // }
 }
 
-class RolesReport {
+class RoleController {
 
     constructor(settings) {
-        this.settings = settings;
+        this.roles = {};
+
+        _.forEach(settings, (_settings, role) => {
+            this.roles[role] = new Role(role, _settings, defaultMaxCreepNum);
+        });
+
+        this.memory.priority = this.memory.priority || 0;
+
+        this.calculateTotalCap();
+    }
+
+    get memory() {
+        if (_.isUndefined(Memory.roleController)) {
+            Memory.roleController = {};
+        }
+
+        if (!_.isObject(Memory.roleController)) {
+            return undefined;
+        }
+
+        return Memory.roleController;
+    }
+
+    set memory(value) {
+        if (_.isUndefined(Memory.roleController)) {
+            Memory.roleController = {};
+        }
+
+        if (!_.isObject(Memory.roleController)) {
+            throw new Error('Could not set role controller memory');
+        }
+
+        Memory.roleController = value;
     }
 
     get names() {
         return Object.keys(this.settings);
     }
 
-    getRolesWithNoCap() {
-        if (this._rolesWithNoCap === undefined) {
-            this._rolesWithNoCap =  _.filter(this.settings, (_settings, role) => _settings.max === undefined);
+    getRolesWithoutCap() {
+        if (this._rolesWithoutCap === undefined) {
+            this._rolesWithoutCap = _.forEach(this.roles, (role) => role.max === 0);;
         }
-        return this._rolesWithNoCap;
+        return this._rolesWithoutCap;
     }
 
-    getTargetRoleMap() {
-        const rolesWithNoCap = this.getRolesWithNoCap();
-        var map = new Map();
-        var total = 0;
+    calculateTotalCap() {
+        const flush = _.isUndefined(Memory.totalMax) ||
+                      Memory.totalMax != defaultMaxCreepNum ||
+                      Memory.flush;
 
-        const panOutTargetNum = (map, total, maxCreepNum) => {
-            _.forEach(rolesWithNoCap, (settings, role) => {
-                map.set(role, map.get(role) + 1);
+        if (!flush) {
+            return;
+        }
+
+        const panOutTargetNum = (total) => {
+            _.forEach(rolesWithoutCap, (role) => {
+                role.memory.cap;
                 total++;
 
-                if (total >= maxCreepNum) {
+                if (total >= role.totalMax) {
                     return false;
                 }
             });
 
-            return (total >= maxCreepNum) ? map : panOutTargetNum(map, total, maxCreepNum);
-        }
-
-        _.forEach(this.settings, (_settings, role) => {
-
-            let num = Math.ceil(defaultMaxCreepNum * _settings.weight);
-
-            if (_settings.max !== undefined && num > _settings.max ) {
-                num = _settings.max;
+            if (total < role.totalMax) {
+                panOutTargetNum(total);
             }
-
-            map.set(role, num);
-            total += num;
-        });
-
-        if (rolesWithNoCap.length > 0) {
-            map = panOutTargetNum(map, total, defaultMaxCreepNum);
         }
 
-        return map;
-    }
+        const rolesWithoutCap = this.getRolesWithoutCap();
+        var total = 0;
 
-    getValidCreepMaxNum() {
-        const targetRoleMap = this.getTargetRoleMap();
+        _.forEach(this.roles, (role) => {
+            total += role.calculateCap();
+        });
 
-        var maxNum = 0;
-
-        for (let entry of targetRoleMap) {
-            maxNum += entry[1];
+        if (rolesWithoutCap.length > 0) {
+            panOutTargetNum(total);
         }
-
-        return maxNum;
     }
 
-    getCurrentRoleMap() {
-        var map = new Map();
+    getTotalCap() {
+        if (_.isUndefined(this._totalCap)) {
+            this._totalCap = 0;
+            _.forEach(this.roles, (role) => this._totalCap += role.memory.cap);
+        }
+        return this._totalCap;
+    }
 
-        this.names.forEach((role) => {
-            map.set(role, 0);
-        });
+    getTotalCreepNum() {
+        if (_.isUndefined(this._totalCeepNum)) {
+            this._totalCeepNum = 0;
+            _.forEach(this.roles, (role) => this._totalCeepNum += role.creepNum);
+        }
+        return this._totalCeepNum;
+    }
 
-        _.forEach(Game.creeps, (creep) => {
-            let role = creep.memory.role;
-            map.set(role, map.get(role) + 1);
-        });
+    isPriority(pointer) {
+        return this.memory.priority === pointer;
+    }
 
-        return map;
+    priorityMoveToNext() {
+        this.memory.priority++;
+
+        if (this.memory.priority == Object.keys(this.roles).length) {
+            this.memory.priority = 0;
+        }
     }
 
 }
 
-const creepManager = {
+class CreepManager {
+    constructor() {
+        this.roleController = new RoleController(roleSettings);
+    }
 
     run(spawn) {
         this.keep(spawn);
-    },
+    }
 
     keep(spawn) {
+        var pointer = 0;
+        const roleController = this.roleController;
 
-        const createNextCreep = (targetRoleMap, currentRoleMap, roleNames, creepMaxNum, totalCreepNum) => {
-            // console.log(`createNextCreep starts`)
-
-            var result;
-
-            for (const entry of targetRoleMap) {
-                let role = entry[0];
-
-                console.log(`Memory.rolePriority ${Memory.rolePriority}`);
-                console.log(`role ${role}`);
-                console.log(`currentCountRoles.get(${role}) ${currentRoleMap.get(role)}`);
-
-
-                if (roleNames[Memory.rolePriority] === role) {
-                    console.log(`createNextCreep: match role ${role}`);
-
-                    // console.log(`Memory.rolePriority2 ${Memory.rolePriority}`);
-
-                    let targetNum = entry[1];
-                    let currentNum = currentRoleMap.get(role);
-
-                    console.log(`targetNum ${targetNum}`);
-                    console.log(`currentNum ${currentNum}`);
-
-                    if (currentNum < targetNum) {
-                        result = this.createCreep(spawn, role);
-
-                        if (result !== false ) {
-                            // currentCountRoles.set(role, currentCountRoles.get(role) + 1);
-                            // totalCreepNum += 1;
-
-                            Memory.rolePriority++;
-                            if (Memory.rolePriority == roleNames.length) {
-                                Memory.rolePriority = 0;
-                            }
-                        }
-
-                        break;
-                    }
-                    else {
-                        Memory.rolePriority++;
-                        if (Memory.rolePriority == roleNames.length) {
-                            Memory.rolePriority = 0;
-                        }
+        _.forEach(roleController.roles, (role) => {
+            if (roleController.isPriority(pointer)) {
+                if (role.isCapacityFull()) {
+                    roleController.priorityMoveToNext();
+                }
+                else {
+                    let result = this.createCreep(spawn, role.name);
+                    if (result !== false) {
+                        roleController.priorityMoveToNext();
                     }
 
+                    return false;
                 }
             }
 
-            // console.log(`result ${result}`);
-            // console.log(`totalCreepNum ${totalCreepNum}`);
-            // console.log(`creepMaxNum ${creepMaxNum}`);
+            pointer++;
+        });
+    }
 
-            if (result === false) {
-                return;
-            }
-            else if (totalCreepNum < creepMaxNum) {
-                createNextCreep(targetRoleMap, currentRoleMap, roleNames, creepMaxNum, totalCreepNum);
-            }
+    createCreep(spawn, roleName) {
 
-        }
-
-        const roleReport = new RolesReport(roleSettings);
-
-        const roleNames      = roleReport.names;
-        const targetRoleMap  = roleReport.getTargetRoleMap();
-        const currentRoleMap = roleReport.getCurrentRoleMap();
-        const creepMaxNum    = roleReport.getValidCreepMaxNum();
-
-
-        var totalCreepNum = Object.keys(Game.creeps).length;
-
-        if (Memory.rolePriority === undefined) {
-            Memory.rolePriority = 0;
-        }
-
-        createNextCreep(targetRoleMap, currentRoleMap, roleNames, creepMaxNum, totalCreepNum);
-
-    },
-
-    createCreep(spawn, role) {
-
-        console.log(`createCreep starts role ${role}`);
-
-        const body = this.getBody(role);
-
-        const result = spawn.canCreateCreep(body);
-
-        console.log(`createCreep: canCreateCreep ${role} result ${result}`)
-
-        if (result == OK) {
-            const newName = spawn.createCreep(body, undefined, {role});
-            console.log(`[${role} ${newName}] is created.`);
-
-            var creep;
-
-            _.forEach(Game.creeps, (_creep, name) => {
-                if (name == newName) {
-                    creep = _creep;
-                }
-            });
-            // return false;
-            return creep;
-        }
-        else {
-            console.log(`Cannot create creep, error ${result}`);
-
+        if (!_.isNull(spawn.spawning)) {
             return false;
         }
 
-    },
+        const body = this.getBody(roleName);
 
-    getBody(role) {
-        return roleSettings[role].body[0];
-    },
+        if (!this.isEnergyEnough(spawn.room, body)) {
+            return false;
+        }
+
+        console.log(`createCreep starts role ${roleName}`);
+
+        // const result = spawn.canCreateCreep(body);
+        const result = spawn.createCreep(body, undefined, {role: roleName});
+
+        console.log(`createCreep: ${roleName} result ${result}`)
+
+        if (_.isString(result)) {
+            console.log(`[${roleName} ${result}] is created.`);
+        }
+        else {
+            console.log(`Cannot create creep, error ${result}`);
+            return false;
+        }
+
+    }
+
+    getBody(roleName) {
+        return roleSettings[roleName].body[0];
+    }
+
+    calculateBodyEnergyCost(body) {
+        var energy = 0;
+
+        body.forEach(part => {
+            switch (part) {
+                case MOVE:
+                    energy += 50;
+                    break;
+                case WORK:
+                    energy += 100;
+                    break;
+                case CARRY:
+                    energy += 50;
+                    break;
+                case ATTACK:
+                    energy += 80;
+                    break;
+                case RANGED_ATTACK:
+                    energy += 150;
+                    break;
+                case HEAL:
+                    energy += 250;
+                    break;
+                case CLAIM:
+                    energy += 600;
+                    break;
+                case TOUGH:
+                    energy += 10;
+                    break;
+            }
+        });
+
+        return energy;
+    }
+
+    isEnergyEnough(room, body) {
+        return room.energyAvailable >= this.calculateBodyEnergyCost(body);
+    }
 
 }
+
+const creepManager = new CreepManager();
 
 module.exports = creepManager;

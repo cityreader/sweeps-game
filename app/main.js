@@ -1,4 +1,4 @@
-var tools = require('tools');
+var utilities = require('utilities');
 
 var ai = require('ai');
 
@@ -10,8 +10,15 @@ var roleRpairer = require('role.repairer');
 
 var creepManager = require('creep.manager');
 
+Room.prototype.stats = function() {
+    return {
+        myCreepsCnt: this.find(FIND_MY_CREEPS).length,
+        enemiesCnt: this.find(FIND_HOSTILE_CREEPS).length
+    };
+};
+
 Object.defineProperty(Source.prototype, 'memory', {
-   get() {
+    get() {
         if (_.isUndefined(Memory.sources)) {
             Memory.sources = {};
         }
@@ -21,22 +28,26 @@ Object.defineProperty(Source.prototype, 'memory', {
         }
 
         Memory.sources[this.id] = Memory.sources[this.id] || {};
-
         return Memory.sources[this.id];
-   },
+    },
 
-   set(value) {
-       if (_.isUndefined(Memory.sources)) {
-           Memory.sources = {}
-       }
+    set(value) {
+        if (_.isUndefined(Memory.sources)) {
+            Memory.sources = {};
+            Memory.sources[this.id] = {};
+        }
 
-       if (!_.isObject(Memory.sources)) {
-           throw new Error('Could not set source memory');
-       }
+        if (!_.isObject(Memory.sources)) {
+            throw new Error('Could not set source memory');
+        }
 
-       Memory.sources[this.id] = value;
-   }
+        Memory.sources[this.id] = value;
+    }
 });
+
+Creep.prototype.toString = function() {
+    return `${this.memory.role} ${this.name}`;
+}
 
 module.exports.loop = function () {
 
@@ -63,7 +74,7 @@ module.exports.loop = function () {
             // console.log('Clearing non-existing creep memory:', name);
         }
     }
-
+;
     _.forEach(Game.creeps, (creep) => {
         switch (creep.memory.role) {
             case 'harvester':
@@ -93,5 +104,7 @@ module.exports.loop = function () {
     _.forEach(Game.spawns, (spawn) => {
         creepManager.run(spawn);
     });
+
+    Memory.flush = false;
 
 }
