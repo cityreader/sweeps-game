@@ -75,9 +75,9 @@ module.exports.loop = function () {
         }
     }
 
-    // _.forEach(Memory.sources, memory => {
-    //     memory.workers = memory.workers.filter(creepId => Game.getObjectById(creepId));
-    // });
+    _.forEach(Memory.sources, memory => {
+        memory.workers = memory.workers.filter(creepId => Game.getObjectById(creepId));
+    });
 
     _.forEach(Game.creeps, (creep) => {
         switch (creep.memory.role) {
