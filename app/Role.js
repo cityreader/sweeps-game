@@ -1,11 +1,14 @@
 class Role {
 
-    constructor(name, settings, totalMax) {
+    constructor(name, settings = null, totalMax = null) {
         this.name = name;
-        this.max = _.isUndefined(settings.max) ? -1 : settings.max;
-        this.weight = settings.weight;
-        this.body = settings.body;
-        this.totalMax = totalMax;
+
+        if (settings && totalMax) {
+            this.max = _.isUndefined(settings.max) ? -1 : settings.max;
+            this.weight = settings.weight;
+            this.body = settings.body;
+            this.totalMax = totalMax;
+        }
     }
 
     get memory() {
