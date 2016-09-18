@@ -71,7 +71,7 @@ class Role {
     }
 
     isCapacityFull() {
-        return this.creepNum == this.memory.cap;
+        return this.creepNum >= this.memory.cap;
     }
 
 }
