@@ -4,7 +4,7 @@ var defaultMaxCreepNum = 12;
 
 const roleSettings = {
     harvester : {
-        weight: 0.3,
+        weight: 0.4,
         body: [
             [WORK, CARRY, MOVE], // 200
             [WORK, WORK, CARRY, MOVE], // 300
