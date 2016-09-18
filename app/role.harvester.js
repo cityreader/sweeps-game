@@ -1,4 +1,5 @@
 const creepManager = require('creep.manager');
+const Role = require('Role');
 
 const roleHarvester = {
 
@@ -49,19 +50,17 @@ const roleHarvester = {
             return;
         }
 
-        if (_.isUndefined(creep.memory.sourceId)) {
-            const sources = creep.room.find(FIND_SOURCES);
+        const sources = creep.room.find(FIND_SOURCES);
 
-            _.forEach(sources, (source) => {
-                if (!source.memory.blocked &&
-                    source.memory.workers.length < source.memory.capacity) {
+        _.forEach(sources, (source) => {
+            if (!source.memory.blocked &&
+                source.memory.workers.length < source.memory.capacity) {
 
-                    source.memory.workers.push(creep.id);
-                    creep.memory.sourceId = source.id;
-                    return false;
-                }
-            });
-        }
+                source.memory.workers.push(creep.id);
+                creep.memory.sourceId = source.id;
+                return false;
+            }
+        });
 
         if (_.isUndefined(creep.memory.fullTicks)) {
             creep.memory.fullTicks = creep.ticksToLive;
@@ -75,7 +74,12 @@ const roleHarvester = {
 
         if (creep.ticksTolive <= creep.memory.moveTicks + ticksToBuild) {
             const source = Game.getObjectById(creep.memory.sourceId);
-            source.memory.workers = source.workers.filter(creepId => creepId != creep.id);
+            source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
+
+            const role = new Role(this.memory.role);
+            if (role.creepNum + 1 > role.memory.cap) {
+                return;
+            }
 
             const spawns = creep.room.find(FIND_MY_SPAWNS);
             creepManager.createCreep(spawns[0], creep.memory.role);

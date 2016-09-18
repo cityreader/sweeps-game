@@ -1,4 +1,5 @@
-const role = 'mover';
+const creepManager = require('creep.manager');
+const Role = require('Role');
 
 const roleMover = {
 
@@ -85,20 +86,19 @@ const roleMover = {
             return;
         }
 
-        if (_.isUndefined(creep.memory.sourceId)) {
-            const sources = creep.room.find(FIND_SOURCES);
+        const sources = creep.room.find(FIND_SOURCES);
 
-            _.forEach(sources, (source) => {
-                if (!source.memory.blocked &&
-                    !source.memory.moverId &&
-                    source.memory.workers.length > 0) {
+        _.forEach(sources, (source) => {
+            if (!source.memory.blocked &&
+                !source.memory.moverId &&
+                source.memory.workers.length > 0) {
 
-                    source.memory.moverId = creep.id;
-                    creep.memory.sourceId = source.id;
-                    return false;
-                }
-              });
-        }
+                source.memory.moverId = creep.id;
+                creep.memory.sourceId = source.id;
+                return false;
+            }
+          });
+
 
         if (_.isUndefined(creep.memory.fullTicks)) {
             creep.memory.fullTicks = creep.ticksToLive;
@@ -108,6 +108,11 @@ const roleMover = {
     },
 
     checkHealth(creep) {
+        const role = new Role(this.memory.role);
+        if (role.creepNum + 1 > role.memory.cap) {
+            return;
+        }
+
         const ticksToBuild = this.ticksToBuild(creep);
 
         if (creep.ticksTolive <= creep.memory.moveTicks + ticksToBuild) {
