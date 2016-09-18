@@ -65,6 +65,7 @@ const bootstrap = (room) => {
                 capacity: total,
                 workers: [],
                 max: false,
+                moverId: null,
             }
 
             source.memory = data;

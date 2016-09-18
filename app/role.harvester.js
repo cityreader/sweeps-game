@@ -15,7 +15,7 @@ const roleHarvester = {
                 creep.moveTo(target);
             }
             else {
-                if (_.isUndefined(creep.memory.moveTicks)) {
+                if (_.isNull(creep.memory.moveTicks)) {
                     creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
                 }
             }
@@ -45,26 +45,29 @@ const roleHarvester = {
     },
 
     bootstrap(creep) {
-
-        if (_.isUndefined(creep.memory.sourceId)) {
-            var sources = creep.room.find(FIND_SOURCES);
-
-            sources = _.filter(sources, (source) => {
-                let memory = Memory.sources[source.id];
-                return memory.workers.length < memory.capacity;
-            })
-
-            _.forEach(sources, (source) => {
-                source.memory.workers.push(creep.id);
-                creep.memory.sourceId = source.id;
-                return false;
-            });
+        if (creep.memory.booted) {
+            return;
         }
 
+        if (_.isUndefined(creep.memory.sourceId)) {
+            const sources = creep.room.find(FIND_SOURCES);
+
+            _.forEach(sources, (source) => {
+                if (!source.memory.blocked &&
+                    source.memory.workers.length < source.memory.capacity) {
+
+                    source.memory.workers.push(creep.id);
+                    creep.memory.sourceId = source.id;
+                    return false;
+                }
+            });
+        }
 
         if (_.isUndefined(creep.memory.fullTicks)) {
             creep.memory.fullTicks = creep.ticksToLive;
         }
+
+        creep.memory.booted = true;
     },
 
     checkHealth(creep) {
