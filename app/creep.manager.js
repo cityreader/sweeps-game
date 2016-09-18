@@ -10,7 +10,7 @@ const roleSettings = {
             [WORK, WORK, CARRY, MOVE], // 300
             [WORK, WORK, WORK, CARRY, MOVE], // 400
         ],
-        max: 4,
+        max: 5,
     },
     mover : {
         weight: 0.15,
