@@ -6,7 +6,7 @@ var roleHarvester = require('role.harvester');
 var roleMover = require('role.mover');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
-var roleRpairer = require('role.repairer');
+var roleRepairer = require('role.repairer');
 
 var creepManager = require('creep.manager');
 

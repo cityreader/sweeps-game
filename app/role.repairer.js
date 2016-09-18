@@ -5,6 +5,7 @@ const roleRepairer = {
         /** @param {Creep} creep **/
         run: function(creep) {
 
+            return;
             if(creep.memory.building && creep.carry.energy == 0) {
                 creep.memory.building = false;
                 creep.say('harvesting');
