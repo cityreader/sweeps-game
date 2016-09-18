@@ -42,7 +42,14 @@ class Role {
     }
 
     get creepNum() {
-        return _.filter(Game.creeps, (creep) => creep.memory.role === this.name);
+        return _.reduce(Game.creeps, (sum, creep) => {
+            if (creep.memory.role === this.name) {
+                return sum + 1;
+            }
+            else {
+                return sum;
+            }
+        }, 0);
     }
 
     getCapByWeight() {
