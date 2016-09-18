@@ -45,8 +45,8 @@ class RoleController {
     constructor(settings) {
         this.roles = {};
 
-        _.forEach(settings, (_settings, role) => {
-            this.roles[role] = new Role(role, _settings, defaultMaxCreepNum);
+        _.forEach(settings, (_settings, roleName) => {
+            this.roles[roleName] = new Role(roleName, _settings, defaultMaxCreepNum);
         });
 
         this.memory.priority = this.memory.priority || 0;
@@ -201,7 +201,6 @@ class CreepManager {
 
         console.log(`createCreep starts role ${roleName}`);
 
-        // const result = spawn.canCreateCreep(body);
         const result = spawn.createCreep(body, undefined, {role: roleName});
 
         console.log(`createCreep: ${roleName} result ${result}`)
