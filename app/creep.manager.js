@@ -165,6 +165,10 @@ class CreepManager {
     }
 
     keep(spawn) {
+        if (this.roleController.getTotalCreepNum() >= this.roleController.getTotalCap()) {
+            return;
+        }
+
         var pointer = 0;
         const roleController = this.roleController;
 
@@ -209,7 +213,7 @@ class CreepManager {
             console.log(`[${roleName} ${result}] is created.`);
         }
         else {
-            console.log(`Cannot create creep, error ${result}`);
+            console.log(`Cannot create creep ${roleName}, error ${result}`);
             return false;
         }
 
