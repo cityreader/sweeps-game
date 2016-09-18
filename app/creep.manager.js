@@ -4,21 +4,23 @@ var defaultMaxCreepNum = 12;
 
 const roleSettings = {
     harvester : {
-        weight: 0.5,
+        weight: 0.3,
         body: [
-            [WORK, CARRY, MOVE],
+            [WORK, CARRY, MOVE], // 200
+            [WORK, WORK, CARRY, MOVE], // 300
+            [WORK, WORK, WORK, CARRY, MOVE], // 400
         ],
-        max: 5,
+        max: 4,
     },
     mover : {
-        weight: 0.25,
+        weight: 0.15,
         body: [
             [CARRY, MOVE],
         ],
-        max: 3,
+        max: 2,
     },
     upgrader : {
-        weight: 0.3,
+        weight: 0.15,
         body: [
             [WORK, CARRY, MOVE],
         ],
@@ -31,13 +33,13 @@ const roleSettings = {
         ],
         max: 2,
     },
-    // repairer : {
-    //     weight: 0.2,
-    //     body: [
-    //         [WORK, CARRY, MOVE],
-    //     ],
-    //     max: 3,
-    // }
+    repairer : {
+        weight: 0.15,
+        body: [
+            [WORK, CARRY, MOVE],
+        ],
+        max: 2,
+    }
 }
 
 class RoleController {
@@ -197,20 +199,18 @@ class CreepManager {
             return false;
         }
 
-        const body = this.getBody(roleName);
+        const body = this.getBody(roleName, spawn.room);
 
         if (!this.isEnergyEnough(spawn.room, body)) {
             return false;
         }
-
-        console.log(`createCreep starts role ${roleName}`);
 
         const result = spawn.createCreep(body, undefined, {role: roleName});
 
         console.log(`createCreep: ${roleName} result ${result}`)
 
         if (_.isString(result)) {
-            console.log(`[${roleName} ${result}] is created.`);
+            console.log(`[${roleName} ${result}] is created ${body}.`);
         }
         else {
             console.log(`Cannot create creep ${roleName}, error ${result}`);
@@ -219,8 +219,26 @@ class CreepManager {
 
     }
 
-    getBody(roleName) {
-        return roleSettings[roleName].body[0];
+    getBody(roleName, room) {
+        var body = roleSettings[roleName].body[0];
+
+        if (roleSettings[roleName].body.length > 1) {
+            var bodyEnergyCost;
+
+            roleSettings[roleName].body.forEach(_body => {
+                bodyEnergyCost = this.calculateBodyEnergyCost(_body);
+
+                if (bodyEnergyCost  < room.energyAvailable - 200) {
+                    body = _body;
+                }
+                else {
+                    return false;
+                }
+            });
+
+        }
+
+        return body;
     }
 
     calculateBodyEnergyCost(body) {
