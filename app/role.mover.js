@@ -34,7 +34,7 @@ const roleMover = {
                     creep.moveTo(targets[0]);
                 }
                 else {
-                    if (_.isNull(creep.memory.moveTicks)) {
+                    if (!creep.memory.moveTicks) {
                         creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
                     }
                 }
@@ -42,43 +42,6 @@ const roleMover = {
             }
         }
 
-
-        // const creepSettings = roleManager.getCreepSettings(creep);
-        // this.echo(creep, creepSettings);
-// console.log(`roleHarvester starts`);
-        if(creep.carry.energy < creep.carryCapacity) {
-            // const harvesterCreep = Game.creeps['Aubrey'];
-            //
-            // var target = harvesterCreep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
-            //
-            // if(creep.pickup(target) == ERR_NOT_IN_RANGE) {
-            //     creep.moveTo(target);
-            // }
-        }
-        else {
-            // var targets = creep.room.find(FIND_STRUCTURES, {
-            //     filter: (structure) => {
-            //         return (structure.structureType == STRUCTURE_EXTENSION ||
-            //             structure.structureType == STRUCTURE_SPAWN ||
-            //             structure.structureType == STRUCTURE_TOWER) &&
-            //             structure.energy < structure.energyCapacity;
-            //     }
-            // });
-            //
-            // if(targets.length > 0) {
-            //     if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            //         creep.moveTo(targets[0]);
-            //     }
-            // }
-            // else {
-            //     if (creep.pos.x != 26 && creep.pos.y == 22) {
-            //         creep.moveTo(26, 22);
-            //     }
-            //     else {
-            //         creep.drop(RESOURCE_ENERGY);
-            //     }
-            // }
-        }
     },
 
     bootstrap(creep) {
@@ -108,16 +71,20 @@ const roleMover = {
     },
 
     checkHealth(creep) {
-        const role = new Role(this.memory.role);
-        if (role.creepNum + 1 > role.memory.cap) {
+        if (!creep.memory.sourceId) {
             return;
         }
 
         const ticksToBuild = this.ticksToBuild(creep);
 
-        if (creep.ticksTolive <= creep.memory.moveTicks + ticksToBuild) {
+        if (creep.ticksToLive <= creep.memory.moveTicks + ticksToBuild) {
             const source = Game.getObjectById(creep.memory.sourceId);
             source.memory.moverId = null;
+
+            const role = new Role(creep.memory.role);
+            if (role.creepNum + 1 > role.memory.cap) {
+                return;
+            }
 
             const spawns = creep.room.find(FIND_MY_SPAWNS);
             creepManager.createCreep(spawns[0], creep.memory.role);

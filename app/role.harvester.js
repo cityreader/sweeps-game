@@ -16,7 +16,7 @@ const roleHarvester = {
                 creep.moveTo(target);
             }
             else {
-                if (_.isNull(creep.memory.moveTicks)) {
+                if (!creep.memory.moveTicks) {
                     creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
                 }
             }
@@ -79,17 +79,14 @@ const roleHarvester = {
             return;
         }
 
-        const source = Game.getObjectById(creep.memory.sourceId);
-
         const ticksToBuild = this.ticksToBuild(creep);
 
-        if (creep.ticksTolive <= creep.memory.moveTicks + ticksToBuild) {
+        if (creep.ticksToLive <= creep.memory.moveTicks + ticksToBuild) {
             const source = Game.getObjectById(creep.memory.sourceId);
 
-console.log(`source worker length ${source.memory.workers.length}`);
             source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
-console.log(`source worker length 2 ${source.memory.workers.length}`);
-            const role = new Role(this.memory.role);
+
+            const role = new Role(creep.memory.role);
             if (role.creepNum + 1 > role.memory.cap) {
                 return;
             }
