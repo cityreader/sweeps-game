@@ -72,6 +72,8 @@ const roleHarvester = {
             return;
         }
 
+        console.log(`${creep} booting`);
+
         const sources = creep.room.find(FIND_SOURCES);
 
         _.forEach(sources, (source) => {
@@ -84,7 +86,7 @@ const roleHarvester = {
             }
         });
 
-        if (_.isUndefined(creep.memory.fullTicks)) {
+        if (!creep.memory.fullTicks) {
             creep.memory.fullTicks = creep.ticksToLive;
         }
 
