@@ -8,14 +8,14 @@ const roleSettings = {
         body: [
             [WORK, CARRY, MOVE],
         ],
-        max: 3,
+        max: 4,
     },
     mover : {
         weight: 0.2,
         body: [
             [CARRY, MOVE],
         ],
-        max: 3,
+        max: 1,
     },
     upgrader : {
         weight: 0.3,
