@@ -23,10 +23,33 @@ const roleUpgrader = {
 
             // Harvest energy when room energy is not enough for creating an extra creep.
             if (carryCapacity + 200 > creep.room.energyAvailable) {
-                const sources = creep.room.find(FIND_SOURCES);
-                if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(sources[1]);
+                var targets = creep.room.find(FIND_DROPPED_ENERGY);
+                if (targets.length > 0) {
+                    targets.sort((a, b) => b.energy - a.energy)
+
+                    if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets[0]);
+                    }
+                    else {
+                        if (!creep.memory.moveTicks) {
+                            creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
+                        }
+                    }
+
                 }
+                else {
+                    const sources = creep.room.find(FIND_SOURCES);
+
+                    _.forEach(sources, source => {
+                       if (source.memory.workers.length < source.memory.capacity) {
+                           if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                               creep.moveTo(source);
+                           }
+                       }
+                    });
+
+                }
+
             }
             // Pick up or withdraw energy from closest place.
             else {
