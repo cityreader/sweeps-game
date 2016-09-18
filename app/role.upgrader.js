@@ -31,6 +31,8 @@ const roleUpgrader = {
                         creep.moveTo(targets[0]);
                     }
                     else {
+                        creep.say('Picking up');
+
                         if (!creep.memory.moveTicks) {
                             creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
                         }
@@ -51,21 +53,17 @@ const roleUpgrader = {
                 }
 
             }
-            // Pick up or withdraw energy from closest place.
+            // Withdraw energy from closest place.
             else {
                 const controllerId = creep.room.controller.id;
                 const energySourceId = Memory.controllers[controllerId];
                 const energySource = Game.getObjectById(energySourceId);
 
-                if (energySource.energyCapacity !== undefined) {
-                    if(creep.withdraw(energySource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(energySource);
-                    }
+                if(creep.withdraw(energySource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(energySource);
                 }
                 else {
-                    if (creep.pickup(energySource) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(energySource);
-                    }
+                    creep.say('Withdrawing');
                 }
             }
 

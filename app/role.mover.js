@@ -22,24 +22,48 @@ const roleMover = {
                 if (creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0]);
                 }
+                else {
+                    creep.say('Transferring')
+
+                    console.log(`[room energy] ${creep.room.energyAvailable}`);
+                }
             }
 
         }
         else {
-            var targets = creep.room.find(FIND_DROPPED_ENERGY);
-            if (targets.length > 0) {
-                targets.sort((a, b) => b.energy - a.energy)
+            var containers = creep.room.find(FIND_STRUCTURES, 1,
+                {filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
+                                i.store[RESOURCE_ENERGY] > 0
+                });
 
-                if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0]);
+            // Fetch energy from container.
+            if (containers.length > 0) {
+                if (containers[0].transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(containers[0]);
                 }
                 else {
-                    if (!creep.memory.moveTicks) {
-                        creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
-                    }
+                    creep.say('Container transferring');
                 }
-
             }
+            else {
+                var targets = creep.room.find(FIND_DROPPED_ENERGY);
+                if (targets.length > 0) {
+                    targets.sort((a, b) => b.energy - a.energy)
+
+                    if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets[0]);
+                        }
+                    else {
+                        creep.say('Picking up');
+
+                        if (!creep.memory.moveTicks) {
+                            creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
+                        }
+                    }
+
+                }
+            }
+
         }
 
     },
