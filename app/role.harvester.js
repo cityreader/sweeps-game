@@ -22,25 +22,30 @@ const roleHarvester = {
             }
         }
         else {
-            creep.drop(RESOURCE_ENERGY);
+            const moverRole = new Role('mover');
 
-            // // Move to Flag2 to not occupy mining place.
-            // // creep.moveTo(Game.flags.Flag2);
-            // var targets = creep.room.find(FIND_STRUCTURES, {
-            //     filter: (structure) => {
-            //         return (structure.structureType == STRUCTURE_EXTENSION ||
-            //             structure.structureType == STRUCTURE_SPAWN ||
-            //             structure.structureType == STRUCTURE_TOWER) &&
-            //             structure.energy < structure.energyCapacity;
-            //     }
-            // });
+            // Drop energy when there is a mover.
+            if (moverRole.creepNum >= 1) {
+                creep.drop(RESOURCE_ENERGY);
+            }
             //
-            // console.log(`targets.length ${targets.length}`);
-            // if(targets.length > 0) {
-            //     if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            //         creep.moveTo(targets[0]);
-            //     }
-            // }
+            else {
+                var targets = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_EXTENSION ||
+                            structure.structureType == STRUCTURE_SPAWN ||
+                            structure.structureType == STRUCTURE_TOWER) &&
+                            structure.energy < structure.energyCapacity;
+                    }
+                });
+
+                if(targets.length > 0) {
+                    if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets[0]);
+                    }
+                }
+            }
+
         }
 
     },
@@ -70,12 +75,20 @@ const roleHarvester = {
     },
 
     checkHealth(creep) {
+        if (!creep.memory.sourceId) {
+            return;
+        }
+
+        const source = Game.getObjectById(creep.memory.sourceId);
+
         const ticksToBuild = this.ticksToBuild(creep);
 
         if (creep.ticksTolive <= creep.memory.moveTicks + ticksToBuild) {
             const source = Game.getObjectById(creep.memory.sourceId);
-            source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
 
+console.log(`source worker length ${source.memory.workers.length}`);
+            source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
+console.log(`source worker length 2 ${source.memory.workers.length}`);
             const role = new Role(this.memory.role);
             if (role.creepNum + 1 > role.memory.cap) {
                 return;

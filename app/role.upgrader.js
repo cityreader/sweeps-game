@@ -1,16 +1,8 @@
-const role = 'upgrader';
-
 const roleUpgrader = {
 
     /** @param {Creep} creep **/
     run(creep) {
-
-        if (!creep.memory.booted) {
-            this.boostrap(creep);
-        }
-
-        // const creepSettings = roleManager.getCreepSettings(creep);
-        // this.echo(creep, creepSettings);
+        this.boostrap(creep);
 
         if(creep.memory.upgrading && creep.carry.energy == 0) {
             creep.memory.upgrading = false;
@@ -27,26 +19,30 @@ const roleUpgrader = {
             }
         }
         else {
-// return;
-            const controllerId = creep.room.controller.id;
-            const energySourceId = Memory.controllers[controllerId];
+            const carryCapacity = this.carryCapacity(creep);
 
-
-            // var sources = creep.room.find(FIND_SOURCES);
-            // if(creep.harvest(sources[creepSettings.source]) == ERR_NOT_IN_RANGE) {
-            //     creep.moveTo(sources[creepSettings.source]);
-            // }
-
-            const energySource = Game.getObjectById(energySourceId);
-
-            if (energySource.energyCapacity !== undefined) {
-                if(creep.withdraw(energySource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(energySource);
+            // Harvest energy when room energy is not enough for creating an extra creep.
+            if (carryCapacity + 200 > creep.room.energyAvailable) {
+                const sources = creep.room.find(FIND_SOURCES);
+                if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(sources[1]);
                 }
             }
+            // Pick up or withdraw energy from closest place.
             else {
-                if (creep.pickup(energySource) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(energySource);
+                const controllerId = creep.room.controller.id;
+                const energySourceId = Memory.controllers[controllerId];
+                const energySource = Game.getObjectById(energySourceId);
+
+                if (energySource.energyCapacity !== undefined) {
+                    if(creep.withdraw(energySource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(energySource);
+                    }
+                }
+                else {
+                    if (creep.pickup(energySource) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(energySource);
+                    }
                 }
             }
 
@@ -77,7 +73,10 @@ console.log(`closest.id ${closest.id}`)
         }
     },
 
-    // echo: (creep, creepSettings) => {creepSettings.echo && creep.say(`${role} ${creepSettings.model}`)}
+    carryCapacity(creep) {
+        const carryPartNum = creep.body.filter(part => part.type == CARRY).length;
+        return carryPartNum * 50;
+    },
 
 };
 
