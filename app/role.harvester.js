@@ -12,6 +12,14 @@ const roleHarvester = {
         if(creep.carry.energy < creep.carryCapacity) {
             // creep.say('harvesting');
             var target =  Game.getObjectById(creep.memory.sourceId);
+
+            if (target.energy == 0) {
+                let targets = creep.room.find(FIND_SOURCES, {
+                    filter: t => t.energy > 0,
+                });
+                target = targets[0];
+            }
+
             if(creep.harvest(target) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
             }
@@ -26,13 +34,16 @@ const roleHarvester = {
 
             // Drop energy when there is a mover.
             if (moverRole.creepNum >= 1) {
-                // const containers = creep.pos.findInRange(FIND_STRUCTURES, 1,
-                //     {filter: {structureType: STRUCTURE_CONTAINER}});
-
-                var containers = creep.room.find(FIND_STRUCTURES,
+                var containers = creep.pos.findInRange(FIND_STRUCTURES, 1,
                     {filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
-                    _.sum(i.store) < i.storeCapacity
-                    });
+                                    _.sum(i.store) < i.storeCapacity});
+
+                if (containers.length == 0) {
+                    containers = creep.room.find(FIND_STRUCTURES,
+                        {filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
+                        _.sum(i.store) < i.storeCapacity
+                        });
+                }
 
                 if (containers.length > 0) {
                     if (creep.transfer(containers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
