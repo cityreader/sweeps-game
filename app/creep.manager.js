@@ -1,19 +1,20 @@
 const Role = require('Role');
 
-var defaultMaxCreepNum = 12;
+var defaultMaxCreepNum = 10;
 
 const roleSettings = {
     harvester : {
-        weight: 0.4,
+        weight: 0.3,
         body: [
             [WORK, CARRY, MOVE], // 200
             [WORK, WORK, CARRY, MOVE], // 300
             [WORK, WORK, WORK, CARRY, MOVE], // 400
+            [WORK, WORK, WORK, WORK, CARRY, MOVE], // 500
         ],
-        max: 4,
+        max: 3,
     },
     mover : {
-        weight: 0.15,
+        weight: 0.2,
         body: [
             [CARRY, MOVE], // 100
             [CARRY, CARRY, MOVE], // 150
@@ -23,28 +24,34 @@ const roleSettings = {
         max: 2,
     },
     upgrader : {
-        weight: 0.15,
+        weight: 0.2,
         body: [
             [WORK, CARRY, MOVE], // 200
             [WORK, WORK, CARRY, MOVE], // 300
             [WORK, WORK, CARRY, MOVE, MOVE], // 350
             [WORK, WORK, WORK, CARRY, MOVE, MOVE], // 450
+            [WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE], // 550
+            [WORK, WORK, WORK, WORK, MOVE, CARRY, MOVE, MOVE], // 650
         ],
         max: 2,
     },
     builder : {
         weight: 0.2,
         body: [
-            [WORK, CARRY, MOVE],
+            [WORK, CARRY, MOVE], // 200
+            [WORK, WORK, CARRY, MOVE], // 300
+            [WORK, WORK, CARRY, CARRY, MOVE, MOVE], // 400
         ],
         max: 2,
     },
     repairer : {
-        weight: 0.15,
+        weight: 0.1,
         body: [
-            [WORK, CARRY, MOVE],
+            [WORK, CARRY, MOVE], // 200
+            [WORK, WORK, CARRY, MOVE], // 300
+            [WORK, WORK, CARRY, CARRY, MOVE, MOVE], // 400
         ],
-        max: 2,
+        max: 1,
     }
 }
 
