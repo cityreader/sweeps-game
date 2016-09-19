@@ -26,13 +26,19 @@ const roleHarvester = {
 
             // Drop energy when there is a mover.
             if (moverRole.creepNum >= 1) {
-                const containers = creep.pos.findInRange(FIND_STRUCTURES, 1,
-                    {filter: {structureType: STRUCTURE_CONTAINER}});
+                // const containers = creep.pos.findInRange(FIND_STRUCTURES, 1,
+                //     {filter: {structureType: STRUCTURE_CONTAINER}});
+
+                var containers = creep.room.find(FIND_STRUCTURES,
+                    {filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
+                    _.sum(i.store) < i.storeCapacity
+                    });
 
                 if (containers.length > 0) {
                     if (creep.transfer(containers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.drop(RESOURCE_ENERGY);
-                        creep.say('Dropping');
+                        creep.moveTo(containers[0]);
+                        // creep.drop(RESOURCE_ENERGY);
+                        // creep.say('Dropping');
                     }
                     else {
                         creep.say('Transferring');
