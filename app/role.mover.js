@@ -55,7 +55,7 @@ const roleMover = {
 
                     if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(targets[0]);
-                        }
+                    }
                     else {
                         creep.say('Picking up');
 
@@ -88,7 +88,7 @@ const roleMover = {
                 creep.memory.sourceId = source.id;
                 return false;
             }
-          });
+        });
 
         if (!creep.memory.fullTicks) {
             creep.memory.fullTicks = creep.ticksToLive;
