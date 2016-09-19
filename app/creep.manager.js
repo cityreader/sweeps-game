@@ -10,19 +10,25 @@ const roleSettings = {
             [WORK, WORK, CARRY, MOVE], // 300
             [WORK, WORK, WORK, CARRY, MOVE], // 400
         ],
-        max: 5,
+        max: 4,
     },
     mover : {
         weight: 0.15,
         body: [
-            [CARRY, MOVE],
+            [CARRY, MOVE], // 100
+            [CARRY, CARRY, MOVE], // 150
+            [CARRY, CARRY, CARRY, MOVE, MOVE], // 250
+            [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], // 300
         ],
         max: 2,
     },
     upgrader : {
         weight: 0.15,
         body: [
-            [WORK, CARRY, MOVE],
+            [WORK, CARRY, MOVE], // 200
+            [WORK, WORK, CARRY, MOVE], // 300
+            [WORK, WORK, CARRY, MOVE, MOVE], // 350
+            [WORK, WORK, WORK, CARRY, MOVE, MOVE], // 450
         ],
         max: 2,
     },
