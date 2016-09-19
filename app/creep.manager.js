@@ -207,8 +207,7 @@ class CreepManager {
     }
 
     createCreep(spawn, roleName) {
-
-        if (!_.isNull(spawn.spawning)) {
+        if (spawn.spawning) {
             return false;
         }
 
@@ -272,41 +271,55 @@ class CreepManager {
     }
 
     calculateBodyEnergyCost(body) {
-        var energy = 0;
+        const bodyCost = {
+            'move': 50,
+            'work': 100,
+            'carry': 50,
+            'attack': 80,
+            'ranged_attack': 150,
+            'heal': 250,
+            'claim': 600,
+            'tough': 10,
+        };
 
-        body.forEach(part => {
-            switch (part) {
-                case MOVE:
-                    energy += 50;
-                    break;
-                case WORK:
-                    energy += 100;
-                    break;
-                case CARRY:
-                    energy += 50;
-                    break;
-                case ATTACK:
-                    energy += 80;
-                    break;
-                case RANGED_ATTACK:
-                    energy += 150;
-                    break;
-                case HEAL:
-                    energy += 250;
-                    break;
-                case CLAIM:
-                    energy += 600;
-                    break;
-                case TOUGH:
-                    energy += 10;
-                    break;
-            }
-        });
+        const energy = body.reduce((energy, part) => energy + bodyCost[part], 0);
+
+        // var energy = 0;
+        //
+        // body.forEach(part => {
+        //     switch (part) {
+        //         case MOVE:
+        //             energy += 50;
+        //             break;
+        //         case WORK:
+        //             energy += 100;
+        //             break;
+        //         case CARRY:
+        //             energy += 50;
+        //             break;
+        //         case ATTACK:
+        //             energy += 80;
+        //             break;
+        //         case RANGED_ATTACK:
+        //             energy += 150;
+        //             break;
+        //         case HEAL:
+        //             energy += 250;
+        //             break;
+        //         case CLAIM:
+        //             energy += 600;
+        //             break;
+        //         case TOUGH:
+        //             energy += 10;
+        //             break;
+        //     }
+        // });
 
         return energy;
     }
 
     isEnergyEnough(room, body) {
+        console.log(`body ${body} room.energyAvailable ${room.energyAvailable}`);
         return room.energyAvailable >= this.calculateBodyEnergyCost(body);
     }
 
