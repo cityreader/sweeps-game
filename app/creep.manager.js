@@ -241,7 +241,24 @@ class CreepManager {
             roleSettings[roleName].body.forEach(_body => {
                 bodyEnergyCost = this.calculateBodyEnergyCost(_body);
 
-                if (bodyEnergyCost  < room.energyAvailable - 200) {
+                if (bodyEnergyCost  < room.energyAvailable - 100) {
+
+                    if (roleName == 'harvester') {
+                        const maxWorkParts = 10;
+                        var workParts = 0;
+
+                        _.forEach(Game.creeps, creep => {
+                            if (creep.memory.role == 'roleName') {
+                                creep.body.forEach(part => part.type==WORK && workParts++);
+                            }
+                        });
+
+                        if (workParts > maxWorkParts) {
+                            return false;
+                        }
+                    }
+
+
                     body = _body;
                 }
                 else {
