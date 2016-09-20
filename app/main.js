@@ -53,18 +53,18 @@ module.exports.loop = function () {
 
     ai.run();
 
-    var tower = Game.getObjectById('57dfbbc6adafdf710cbecdff');
+    var tower = Game.getObjectById('57dfcffeb4a8672d0fe825b5');
     if (tower) {
+        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if (closestHostile) {
+            tower.attack(closestHostile)
+        }
+
         var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => structure.hits < structure.hitsMax
         });
         if(closestDamagedStructure) {
             tower.repair(closestDamagedStructure);
-        }
-
-        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if (closestHostile) {
-            tower.attack(closestHostile)
         }
     }
 
