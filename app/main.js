@@ -60,12 +60,16 @@ module.exports.loop = function () {
             tower.attack(closestHostile)
         }
 
-        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure) => structure.hits < structure.hitsMax
-        });
-        if(closestDamagedStructure) {
-            tower.repair(closestDamagedStructure);
+        // Only repair when tower energy is more than 75%.
+        if (tower.energy > tower.energyCapacity * 0.75) {
+            var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+                filter: (structure) => structure.hits < structure.hitsMax
+            });
+            if(closestDamagedStructure) {
+                tower.repair(closestDamagedStructure);
+            }
         }
+
     }
 
     for(var name in Memory.creeps) {
