@@ -31,7 +31,7 @@ const roleMover = {
 
         }
         else {
-            var containers = creep.room.find(FIND_STRUCTURES, 1,
+            var containers = creep.room.find(FIND_STRUCTURES,
                 {filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
                                 i.store[RESOURCE_ENERGY] > 0
                 });
