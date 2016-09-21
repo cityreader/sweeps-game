@@ -63,7 +63,7 @@ module.exports.loop = function () {
         // Only repair when tower energy is more than 75%.
         if (tower.energy > tower.energyCapacity * 0.75) {
             var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter: (structure) => structure.hits < structure.hitsMax
+                filter: (structure) => structure.hits < structure.hitsMax && structure.structureType != STRUCTURE_WALL
             });
             if(closestDamagedStructure) {
                 tower.repair(closestDamagedStructure);
