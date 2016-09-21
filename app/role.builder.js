@@ -16,9 +16,25 @@ const roleBuilder = {
 
         if(creep.memory.building) {
             var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-            if(targets.length) {
+            if(targets.length > 0) {
                 if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0]);
+                }
+            }
+            else {
+                var targets = creep.room.find(FIND_MY_STRUCTURES, {
+                    filter: (s) => s.energyCapacity !== undefined && s.energy < s.energyCapacity && s.structureType != STRUCTURE_STORAGE
+                });
+
+                if (targets.length > 0) {
+                    if (creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets[0]);
+                    }
+                    else {
+                        creep.say('Transferring')
+
+                        console.log(`[room energy] ${creep.room.energyAvailable}`);
+                    }
                 }
             }
         }
