@@ -1,6 +1,6 @@
 const Role = require('Role');
 
-var defaultMaxCreepNum = 11;
+var defaultMaxCreepNum = 9;
 
 const roleSettings = {
     harvester : {
@@ -25,7 +25,7 @@ const roleSettings = {
         max: 2,
     },
     upgrader : {
-        weight: 0.2,
+        weight: 0.3,
         body: [
             // [WORK, CARRY, MOVE], // 200
             [WORK, WORK, CARRY, MOVE], // 300
@@ -37,13 +37,13 @@ const roleSettings = {
         max: 3,
     },
     builder : {
-        weight: 0.2,
+        weight: 0.1,
         body: [
             [WORK, CARRY, MOVE], // 200
             [WORK, WORK, CARRY, MOVE], // 300
             [WORK, CARRY, MOVE, WORK, CARRY, MOVE], // 400
         ],
-        max: 2,
+        max: 0,
     },
     repairer : {
         weight: 0.1,
@@ -182,6 +182,7 @@ class CreepManager {
 
     keep(spawn) {
         if (this.roleController.getTotalCreepNum() >= this.roleController.getTotalCap()) {
+            console.log(`${this.roleController.getTotalCreepNum()} >= ${this.roleController.getTotalCap()}`);
             return;
         }
 
