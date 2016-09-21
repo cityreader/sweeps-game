@@ -294,6 +294,4 @@ class CreepManager {
 
 }
 
-const creepManager = new CreepManager();
-
-module.exports = creepManager;
+module.exports = CreepManager;
