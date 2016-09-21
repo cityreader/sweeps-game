@@ -283,40 +283,7 @@ class CreepManager {
             'tough': 10,
         };
 
-        const energy = body.reduce((energy, part) => energy + bodyCost[part], 0);
-
-        // var energy = 0;
-        //
-        // body.forEach(part => {
-        //     switch (part) {
-        //         case MOVE:
-        //             energy += 50;
-        //             break;
-        //         case WORK:
-        //             energy += 100;
-        //             break;
-        //         case CARRY:
-        //             energy += 50;
-        //             break;
-        //         case ATTACK:
-        //             energy += 80;
-        //             break;
-        //         case RANGED_ATTACK:
-        //             energy += 150;
-        //             break;
-        //         case HEAL:
-        //             energy += 250;
-        //             break;
-        //         case CLAIM:
-        //             energy += 600;
-        //             break;
-        //         case TOUGH:
-        //             energy += 10;
-        //             break;
-        //     }
-        // });
-
-        return energy;
+        return body.reduce((energy, part) => energy + bodyCost[part], 0);
     }
 
     isEnergyEnough(room, body) {
