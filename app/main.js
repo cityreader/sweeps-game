@@ -83,7 +83,13 @@ module.exports.loop = function () {
         memory.workers = memory.workers.filter(creepId => Game.getObjectById(creepId));
     });
 
-    _.forEach(Game.creeps, (creep) => {
+    for (let i in Game.spawns) {
+        let spawn = Game.spawns[i];
+        creepManager.run(spawn);
+    }
+
+    for (let name in Game.creeps) {
+        let creep = Game.creeps[name];
         switch (creep.memory.role) {
             case 'harvester':
                 roleHarvester.run(creep);
@@ -106,12 +112,7 @@ module.exports.loop = function () {
                 break;
         }
 
-    });
-
-
-    _.forEach(Game.spawns, (spawn) => {
-        creepManager.run(spawn);
-    });
+    }
 
     Memory.flush = false;
 
