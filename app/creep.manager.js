@@ -1,6 +1,6 @@
 const Role = require('Role');
 
-var defaultMaxCreepNum = 9;
+var defaultMaxCreepNum = 10;
 
 const roleSettings = {
     harvester : {
@@ -18,9 +18,9 @@ const roleSettings = {
         body: [
             // [CARRY, MOVE], // 100
             [CARRY, CARRY, MOVE], // 150
-            [CARRY, CARRY, MOVE, CARRY, MOVE], // 250
-            [CARRY, CARRY, CARRY, MOVE, CARRY, MOVE], // 300,
-            [CARRY, CARRY, CARRY, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE], // 400
+            // [CARRY, CARRY, MOVE, CARRY, MOVE], // 250
+            // [CARRY, CARRY, CARRY, MOVE, CARRY, MOVE], // 300,
+            // [CARRY, CARRY, CARRY, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE], // 400
         ],
         max: 2,
     },
@@ -33,6 +33,7 @@ const roleSettings = {
             [WORK, WORK, MOVE, WORK, CARRY, MOVE], // 450
             [WORK, WORK, WORK, MOVE, WORK, CARRY, MOVE], // 550
             [WORK, WORK, MOVE, WORK, MOVE, WORK, CARRY, MOVE], // 650
+            [WORK, WORK, WORK, WORK, MOVE, WORK, MOVE, WORK, CARRY, MOVE], // 850
         ],
         max: 3,
     },
@@ -43,7 +44,7 @@ const roleSettings = {
             [WORK, WORK, CARRY, MOVE], // 300
             [WORK, CARRY, MOVE, WORK, CARRY, MOVE], // 400
         ],
-        max: 0,
+        max: 1,
     },
     repairer : {
         weight: 0.1,
