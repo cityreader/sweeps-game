@@ -90,7 +90,7 @@ const roleHarvester = {
     },
 
     bootstrap(creep) {
-        if (creep.memory.booted) {
+        if (creep.memory.booted && !Memory.flush) {
             return;
         }
 
@@ -98,15 +98,19 @@ const roleHarvester = {
 
         const sources = creep.room.find(FIND_SOURCES);
 
-        _.forEach(sources, (source) => {
-            if (!source.memory.blocked &&
-                source.memory.workers.length < source.memory.capacity) {
+        for (let source of sources) {
+            if (source.memory.blocked) {
+                break;
+            }
+
+            let cap = source.memory.max || source.memory.capacity;
+            if (source.memory.workers.length < cap) {
 
                 source.memory.workers.push(creep.id);
                 creep.memory.sourceId = source.id;
-                return false;
+                break;
             }
-        });
+        }
 
         if (!creep.memory.fullTicks) {
             creep.memory.fullTicks = creep.ticksToLive;
