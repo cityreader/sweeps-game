@@ -150,11 +150,7 @@ class RoleController {
     }
 
     getTotalCreepNum() {
-        if (_.isUndefined(this._totalCeepNum)) {
-            this._totalCeepNum = 0;
-            _.forEach(this.roles, (role) => this._totalCeepNum += role.creepNum);
-        }
-        return this._totalCeepNum;
+        return Object.keys(Game.creeps).length;
     }
 
     isPriority(pointer) {
@@ -182,8 +178,11 @@ class CreepManager {
 
     keep(spawn) {
         if (this.roleController.getTotalCreepNum() >= this.roleController.getTotalCap()) {
-            console.log(`${this.roleController.getTotalCreepNum()} >= ${this.roleController.getTotalCap()}`);
+            // console.log(`${this.roleController.getTotalCreepNum()} >= ${this.roleController.getTotalCap()}`);
             return;
+        }
+        else {
+            // console.log(`getTotalCreepNum ${this.roleController.getTotalCreepNum()}`);
         }
 
         var pointer = 0;
