@@ -64,7 +64,7 @@ Creep.prototype.toString = function() {
         attacker:  '#FF0000',
     };
     const role = this.memory.role;
-    return `<font color="${colors[role]}">${role}</font> ${this.name}`;
+    return `[<font color="${colors[role]}">${role}</font> ${this.name}]`;
 }
 
 module.exports = {};
