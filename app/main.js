@@ -1,3 +1,4 @@
+require('prototype.extend');
 var utilities = require('utilities');
 
 var ai = require('ai');
@@ -9,45 +10,6 @@ var roleBuilder = require('role.builder');
 var roleRepairer = require('role.repairer');
 
 var creepManager = require('creep.manager');
-
-Room.prototype.stats = function() {
-    return {
-        myCreepsCnt: this.find(FIND_MY_CREEPS).length,
-        enemiesCnt: this.find(FIND_HOSTILE_CREEPS).length
-    };
-};
-
-Object.defineProperty(Source.prototype, 'memory', {
-    get() {
-        if (_.isUndefined(Memory.sources)) {
-            Memory.sources = {};
-        }
-
-        if (!_.isObject(Memory.sources)) {
-            return undefined;
-        }
-
-        Memory.sources[this.id] = Memory.sources[this.id] || {};
-        return Memory.sources[this.id];
-    },
-
-    set(value) {
-        if (_.isUndefined(Memory.sources)) {
-            Memory.sources = {};
-            Memory.sources[this.id] = {};
-        }
-
-        if (!_.isObject(Memory.sources)) {
-            throw new Error('Could not set source memory');
-        }
-
-        Memory.sources[this.id] = value;
-    }
-});
-
-Creep.prototype.toString = function() {
-    return `${this.memory.role} ${this.name}`;
-}
 
 module.exports.loop = function () {
 
