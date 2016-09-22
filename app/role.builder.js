@@ -44,9 +44,9 @@ const roleBuilder = {
             // Harvest energy when room energy is not enough for creating an extra creep.
             if (true || (carryCapacity + 600 > creep.room.energyAvailable)) {
 
-                var containers = creep.room.find(FIND_STRUCTURES, 1,
+                var containers = creep.room.find(FIND_STRUCTURES,
                     {filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
-                    i.store[RESOURCE_ENERGY] > 0
+                    i.store[RESOURCE_ENERGY] > 100
                     });
 
                 // Fetch energy from container.
