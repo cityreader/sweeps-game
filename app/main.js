@@ -8,6 +8,7 @@ var roleMover = require('role.mover');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleRepairer = require('role.repairer');
+var roleScouter = require('role.scouter');
 
 const CreepManager = require('creep.manager');
 
