@@ -104,20 +104,24 @@ const roleUpgrader = {
 
         const controllerId = creep.room.controller.id;
 
-        if (Memory.controllers[controllerId] === undefined) {
+        if (controllerId && Memory.controllers[controllerId] === undefined) {
 
             var targets = creep.room.find(FIND_SOURCES, {filter: (s,i) => i < 2});
             // var targets = _.filter(sources, (source, index) => index < 2);
 
             const spawns = creep.room.find(FIND_MY_SPAWNS);
 
-            targets.push(spawns[0]);
-            console.log(`targets ${targets}`)
-            console.log(`creep.room.controller ${creep.room.crontroller}`)
+            if (spawns.length > 0) {
+                targets.push(spawns[0]);
+            }
+
+            // console.log(JSON.stringify(targets, null, '\t'));
+            // console.log(`targets ${targets}`)
+            // console.log(`creep.room.controller ${creep.room.controller}`)
             var closest = creep.room.controller.pos.findClosestByPath(targets);
-console.log(`closest.id ${closest.id}`)
+            // console.log(`closest.id ${closest.id}`)
             Memory.controllers[controllerId] = closest.id;
-            console.log(`Memory.controllers[${controllerId}] ${Memory.controllers[controllerId]}`)
+            // console.log(`Memory.controllers[${controllerId}] ${Memory.controllers[controllerId]}`)
         }
     },
 
