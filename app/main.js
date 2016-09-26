@@ -81,6 +81,9 @@ module.exports.loop = function () {
             case 'repairer':
                 roleRepairer.run(creep);
                 break;
+
+            case 'scouter':
+                roleScouter.run(creep);
         }
 
     }
