@@ -11,7 +11,7 @@ const roleSettings = {
             [WORK, WORK, WORK, CARRY, MOVE], // 400
             // [WORK, WORK, WORK, WORK, CARRY, MOVE], // 500
         ],
-        max: 3,
+        max: 2,
     },
     mover : {
         weight: 0.2,
@@ -35,17 +35,18 @@ const roleSettings = {
             [WORK, WORK, MOVE, WORK, MOVE, WORK, CARRY, MOVE], // 650
             [WORK, WORK, WORK, WORK, MOVE, WORK, MOVE, WORK, CARRY, MOVE], // 850
             [WORK, WORK, WORK, WORK, WORK, MOVE, WORK, MOVE, WORK, CARRY, MOVE], // 950
+            [WORK, WORK, WORK, WORK, WORK, MOVE, WORK, MOVE, WORK, MOVE, WORK, CARRY, MOVE], // 1100
         ],
         max: 3,
     },
     builder : {
-        weight: 0.1,
+        weight: 0.2,
         body: [
             [WORK, CARRY, MOVE], // 200
             [WORK, WORK, CARRY, MOVE], // 300
             [WORK, CARRY, MOVE, WORK, CARRY, MOVE], // 400
         ],
-        max: 1,
+        max: 2,
     },
     repairer : {
         weight: 0.1,
