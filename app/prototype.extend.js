@@ -16,38 +16,62 @@ Room.prototype.stats = function() {
 /**
  * Add memory link to source object.
  */
-Object.defineProperty(Source.prototype, 'memory', {
-    get() {
-        if (_.isUndefined(Memory.sources)) {
-            Memory.sources = {};
+if (!Source.prototype.memory) {
+    Object.defineProperty(Source.prototype, 'memory', {
+        get() {
+            if (_.isUndefined(Memory.sources)) {
+                Memory.sources = {};
+            }
+
+            if (!_.isObject(Memory.sources)) {
+                return undefined;
+            }
+
+            Memory.sources[this.id] = Memory.sources[this.id] || {};
+            return Memory.sources[this.id];
+        },
+
+        set(value) {
+            if (!this.id) {
+                console.log(`source ${JSON.stringify(this, null, '\t')}`);
+                return;
+            }
+            if (_.isUndefined(Memory.sources)) {
+                Memory.sources = {};
+                Memory.sources[this.id] = {};
+            }
+
+            if (!_.isObject(Memory.sources)) {
+                throw new Error('Could not set source memory');
+            }
+
+            Memory.sources[this.id] = value;
         }
-
-        if (!_.isObject(Memory.sources)) {
-            return undefined;
-        }
-
-        Memory.sources[this.id] = Memory.sources[this.id] || {};
-        return Memory.sources[this.id];
-    },
-
-    set(value) {
-        if (_.isUndefined(Memory.sources)) {
-            Memory.sources = {};
-            Memory.sources[this.id] = {};
-        }
-
-        if (!_.isObject(Memory.sources)) {
-            throw new Error('Could not set source memory');
-        }
-
-        Memory.sources[this.id] = value;
-    }
-});
+    });
+}
 
 
 /**
  * =========== Creep ===========
  */
+if (!Creep.prototype.spawn) {
+    Object.defineProperty(Creep.prototype, 'spawn', {
+        get() {
+            if (!this._spawn) {
+                const spawns = this.room.find(FIND_MY_SPAWNS);
+                if (spawns.length > 0) {
+                    this._spawn = spawns.shift();
+                }
+                else {
+                    this._spawn = false;
+                }
+            }
+
+            return this._spawn;
+        },
+    });
+}
+
 
 /**
  * Print creep object.
