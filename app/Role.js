@@ -82,6 +82,10 @@ class Role {
             cap = this.max;
         }
 
+        if (this.name == 'harvester' && cap > this.spawn.sourceCapacity) {
+            cap = this.spawn.sourceCapacity;
+        }
+
         this.memory.cap = cap;
     }
 

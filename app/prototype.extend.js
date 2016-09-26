@@ -10,6 +10,20 @@ Room.prototype.stats = function() {
 };
 
 /**
+ * =========== Spawn ===========
+ */
+
+if (!Spawn.prototype.sourceCapacity) {
+    Object.defineProperty(Spawn.prototype, 'sourceCapacity', {
+        get() {
+            const sources = this.room.find(FIND_SOURCES);
+            const capacity = sources.reduce((sum, source) => sum + source.memory.capacity, 0);
+            return capacity;
+        },
+    });
+}
+
+/**
  * =========== Source ===========
  */
 
