@@ -9,9 +9,18 @@ const roleHarvester = {
 
         this.checkHealth(creep);
 
-        if(creep.carry.energy < creep.carryCapacity) {
+        if (creep.carry.energy < creep.carryCapacity) {
             // creep.say('harvesting');
-            var target =  Game.getObjectById(creep.memory.sourceId);
+
+            var target;
+
+            if (creep.memory.sourceId) {
+                target = Game.getObjectById(creep.memory.sourceId);
+            }
+            else {
+                let targets = creep.room.find(FIND_SOURCES);
+                target = targets[0];
+            }
 
             if (target.energy == 0) {
                 let targets = creep.room.find(FIND_SOURCES, {
