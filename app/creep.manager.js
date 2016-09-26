@@ -34,6 +34,7 @@ const roleSettings = {
             [WORK, WORK, WORK, MOVE, WORK, CARRY, MOVE], // 550
             [WORK, WORK, MOVE, WORK, MOVE, WORK, CARRY, MOVE], // 650
             [WORK, WORK, WORK, WORK, MOVE, WORK, MOVE, WORK, CARRY, MOVE], // 850
+            [WORK, WORK, WORK, WORK, WORK, MOVE, WORK, MOVE, WORK, CARRY, MOVE], // 950
         ],
         max: 3,
     },
