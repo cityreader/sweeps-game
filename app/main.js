@@ -53,10 +53,11 @@ module.exports.loop = function () {
         });
     });
 
-    const creepManager = new CreepManager();
+
     for (let i in Game.spawns) {
         let spawn = Game.spawns[i];
-        creepManager.run(spawn);
+        const creepManager = new CreepManager(spawn);
+        creepManager.run();
     }
 
     for (let name in Game.creeps) {

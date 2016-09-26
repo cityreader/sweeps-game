@@ -30,7 +30,7 @@ const roleHarvester = {
             }
         }
         else {
-            const moverRole = new Role('mover');
+            const moverRole = new Role(creep.spawn, 'mover');
 
             // Drop energy when there is a mover.
             if (moverRole.creepNum >= 1) {
@@ -133,7 +133,7 @@ const roleHarvester = {
 
             source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
 
-            const role = new Role(creep.memory.role);
+            const role = new Role(creep.spawn, creep.memory.role);
             if (role.creepNum + 1 > role.memory.cap) {
                 return;
             }

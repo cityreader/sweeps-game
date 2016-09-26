@@ -25,7 +25,7 @@ const roleMover = {
                 else {
                     creep.say('Transferring')
 
-                    console.log(`[room energy] ${creep.room.energyAvailable}`);
+                    console.log(`${creep.room} energy ${creep.room.energyAvailable}`);
                 }
             }
 
@@ -113,7 +113,7 @@ const roleMover = {
             const source = Game.getObjectById(creep.memory.sourceId);
             source.memory.moverId = null;
 
-            const role = new Role(creep.memory.role);
+            const role = new Role(creep.spawn, creep.memory.role);
             if (role.creepNum + 1 > role.memory.cap) {
                 return;
             }

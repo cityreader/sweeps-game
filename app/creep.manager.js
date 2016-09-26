@@ -60,11 +60,12 @@ const roleSettings = {
 
 class RoleController {
 
-    constructor(settings) {
+    constructor(settings, spawn) {
         this.roles = {};
+        this.spawn = spawn;
 
         _.forEach(settings, (_settings, roleName) => {
-            this.roles[roleName] = new Role(roleName, _settings, defaultMaxCreepNum);
+            this.roles[roleName] = new Role(spawn, roleName, _settings, defaultMaxCreepNum);
         });
 
         this.memory.priority = this.memory.priority || 0;
@@ -151,8 +152,8 @@ class RoleController {
         return this._totalCap;
     }
 
-    getTotalCreepNum() {
-        return Object.keys(Game.creeps).length;
+    getTotalCreepNum(spawn) {
+        return _.reduce(Game.creeps, (sum, creep) => creep.room === spawn.room ? sum+1: sum, 0);
     }
 
     isPriority(pointer) {
@@ -170,16 +171,17 @@ class RoleController {
 }
 
 class CreepManager {
-    constructor() {
-        this.roleController = new RoleController(roleSettings);
+    constructor(spawn) {
+        this.spawn = spawn;
+        this.roleController = new RoleController(roleSettings, spawn);
     }
 
-    run(spawn) {
-        this.keep(spawn);
+    run() {
+        this.keep(this.spawn);
     }
 
     keep(spawn) {
-        if (this.roleController.getTotalCreepNum() >= this.roleController.getTotalCap()) {
+        if (this.roleController.getTotalCreepNum(spawn) >= this.roleController.getTotalCap()) {
             // console.log(`${this.roleController.getTotalCreepNum()} >= ${this.roleController.getTotalCap()}`);
             return;
         }
