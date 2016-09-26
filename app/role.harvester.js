@@ -126,7 +126,9 @@ const roleHarvester = {
 
         const ticksToBuild = this.ticksToBuild(creep);
 
-        if (creep.ticksToLive <= creep.memory.moveTicks + ticksToBuild) {
+
+
+        if (!creep.memory.offspring && creep.ticksToLive <= creep.memory.moveTicks + ticksToBuild) {
             const source = Game.getObjectById(creep.memory.sourceId);
 
             source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
@@ -137,7 +139,13 @@ const roleHarvester = {
             }
 
             const spawns = creep.room.find(FIND_MY_SPAWNS);
-            creepManager.createCreep(spawns[0], creep.memory.role);
+
+            if (spawns.length > 0) {
+                const spawn = spawns.shift();
+                // creepManager.createCreep(spawn, creep.memory.role);
+            }
+
+            creep.memory.offspring = true;
         }
     },
 
