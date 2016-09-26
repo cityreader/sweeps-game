@@ -1,6 +1,7 @@
 class Role {
 
-    constructor(name, settings = null, totalMax = null) {
+    constructor(spawn, name, settings = null, totalMax = null) {
+        this.spawn = spawn;
         this.name = name;
 
         if (settings && totalMax) {
