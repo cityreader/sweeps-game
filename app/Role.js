@@ -13,47 +13,59 @@ class Role {
     }
 
     get memory() {
-        if (_.isUndefined(Memory.roles)) {
-            Memory.roles = {};
+        if (_.isUndefined(Memory.roleControllers)) {
+            Memory.roleControllers = {};
         }
 
-        if (_.isUndefined(Memory.roles)) {
-            Memory.roles = {};
+        if (_.isUndefined(Memory.roleControllers[this.spawn.name])) {
+            Memory.roleControllers[this.spawn.name] = {};
         }
 
-        if (!_.isObject(Memory.roles)) {
+        if (_.isUndefined(Memory.roleControllers[this.spawn.name].roles)) {
+            Memory.roleControllers[this.spawn.name].roles = {};
+        }
+
+        if (!_.isObject(Memory.roleControllers[this.spawn.name].roles)) {
             return undefined;
         }
 
-        Memory.roles[this.name] = Memory.roles[this.name] || {};
-        return Memory.roles[this.name];
+        Memory.roleControllers[this.spawn.name].roles[this.name] = Memory.roleControllers[this.spawn.name].roles[this.name] || {};
+        return Memory.roleControllers[this.spawn.name].roles[this.name];
     }
 
     set memory(value) {
-        console.log('aaa')
-        console.log(`value ${value}`)
-
-        if (_.isUndefined(Memory.roles)) {
-            Memory.roles = {};
-            Memory.roles[this.name] = {};
+        console.log(`set memory ${value}`);
+        if (_.isUndefined(Memory.roleControllers)) {
+            Memory.roleControllers = {};
         }
 
-        if (!_.isObject(Memory.roles)) {
+        if (_.isUndefined(Memory.roleControllers[this.spawn.name])) {
+            Memory.roleControllers[this.spawn.name] = {};
+        }
+
+        if (_.isUndefined(Memory.roleControllers[this.spawn.name].roles)) {
+            Memory.roleControllers[this.spawn.name].roles = {};
+        }
+
+        if (!_.isObject(Memory.roleControllers[this.spawn.name].roles)) {
             throw new Error('Could not set role memory');
         }
 
-        Memory.roles[this.name] = value;
+        Memory.roleControllers[this.spawn.name].roles[this.name] = value;
     }
 
     get creepNum() {
-        return _.reduce(Game.creeps, (sum, creep) => {
-            if (creep.memory.role === this.name) {
-                return sum + 1;
+        return _.reduce(Game.creeps,
+            (sum, creep) => {
+                if (creep.room === this.spawn.room && creep.memory.role === this.name) {
+                    return sum + 1;
+                }
+                else {
+                    return sum;
+                }
+
             }
-            else {
-                return sum;
-            }
-        }, 0);
+            , 0);
     }
 
     getCapByWeight() {
@@ -61,6 +73,7 @@ class Role {
     }
 
     calculateCap() {
+
         const capByWeight = this.getCapByWeight();
         var cap = capByWeight;
 
@@ -68,8 +81,6 @@ class Role {
         if (this.max >= 0 && cap > this.max) {
             cap = this.max;
         }
-
-        this.memory;
 
         this.memory.cap = cap;
     }
