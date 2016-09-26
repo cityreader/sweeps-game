@@ -43,6 +43,10 @@ module.exports.loop = function () {
     }
 
     _.forEach(Memory.sources, memory => {
+        if (_.isUndefined(memory.workers)) {
+            return;
+        }
+
         memory.workers = memory.workers.filter(creepId => {
             let creep = Game.getObjectById(creepId);
             if (creep && creep.memory.role == 'harvester') {
