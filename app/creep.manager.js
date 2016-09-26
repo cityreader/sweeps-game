@@ -74,27 +74,29 @@ class RoleController {
     }
 
     get memory() {
-        if (_.isUndefined(Memory.roleController)) {
-            Memory.roleController = {};
+        if (_.isUndefined(Memory.roleControllers)) {
+            Memory.roleControllers = {};
         }
 
-        if (!_.isObject(Memory.roleController)) {
+        if (!_.isObject(Memory.roleControllers)) {
             return undefined;
         }
 
-        return Memory.roleController;
+        Memory.roleControllers[this.spawn.name] = Memory.roleControllers[this.spawn.name] || {};
+        return Memory.roleControllers[this.spawn.name];
     }
 
     set memory(value) {
-        if (_.isUndefined(Memory.roleController)) {
-            Memory.roleController = {};
+        if (_.isUndefined(Memory.roleControllers)) {
+            Memory.roleControllers = {};
+            Memory.roleControllers[this.spawn.name] = {};
         }
 
-        if (!_.isObject(Memory.roleController)) {
-            throw new Error('Could not set role controller memory');
+        if (!_.isObject(Memory.roleControllers)) {
+            throw new Error('Could not set roleController memory');
         }
 
-        Memory.roleController = value;
+        Memory.roleControllers[this.spawn.name] = value;
     }
 
     get names() {
