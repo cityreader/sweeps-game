@@ -43,7 +43,14 @@ module.exports.loop = function () {
     }
 
     _.forEach(Memory.sources, memory => {
-        memory.workers = memory.workers.filter(creepId => Game.getObjectById(creepId));
+        memory.workers = memory.workers.filter(creepId => {
+            let creep = Game.getObjectById(creepId);
+            if (creep && creep.memory.role == 'harvester') {
+                return true;
+            }
+
+            return false;
+        });
     });
 
     const creepManager = new CreepManager();
