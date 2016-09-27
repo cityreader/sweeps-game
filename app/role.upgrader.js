@@ -62,14 +62,23 @@ const roleUpgrader = {
                     else {
                         const sources = creep.room.find(FIND_SOURCES);
 
-                        _.forEach(sources, source => {
+                        var source;
+
+                        _.forEach(sources, s => {
                             // Harvest
-                            if (source.memory.workers.length < source.memory.capacity) {
-                                if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                                    creep.moveTo(source);
-                                }
+                            if (s.memory.workers.length < s.memory.capacity) {
+                                source = s;
+                                return false;
                             }
                         });
+
+                        if (!source) {
+                            source = sources[0];
+                        }
+
+                        if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(source);
+                        }
 
                     }
                 }
