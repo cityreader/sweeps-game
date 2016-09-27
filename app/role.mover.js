@@ -31,15 +31,16 @@ const roleMover = {
 
         }
         else {
-            var containers = creep.room.find(FIND_STRUCTURES,
-                {filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
-                                i.store[RESOURCE_ENERGY] > 0
-                });
+            var containers = creep.room.find(FIND_STRUCTURES, {
+                filter: (i) =>
+                    i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0
+            });
 
             // Fetch energy from container.
             if (containers.length > 0) {
+                // console.log(JSON.stringify(containers, null, '\t'))
                 // containers = containers.filter(container => container.store);
-                // containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY])
+                containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY])
 
                 if (containers[0].transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(containers[0]);
