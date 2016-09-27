@@ -44,40 +44,41 @@ const roleBuilder = {
             // Harvest energy when room energy is not enough for creating an extra creep.
             if (true || (carryCapacity + 600 > creep.room.energyAvailable)) {
 
-                var containers = creep.room.find(FIND_STRUCTURES,
-                    {filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
-                    i.store[RESOURCE_ENERGY] > 100
-                    });
+                var targets = creep.room.find(FIND_DROPPED_ENERGY);
+                // Pickup dropped energy.
+                if (targets.length > 0) {
+                    targets.sort((a, b) => b.energy - a.energy)
 
-                // Fetch energy from container.
-                if (containers.length > 0) {
-                    containers = containers.filter(container => container.store);
-                    containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY])
-
-                    if (containers[0].transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(containers[0]);
+                    if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets[0]);
                     }
                     else {
-                        creep.say('Container transferring');
+                        creep.say('Picking up');
+
+                        if (!creep.memory.moveTicks) {
+                            creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
+                        }
                     }
+
                 }
                 else {
-                    var targets = creep.room.find(FIND_DROPPED_ENERGY);
-                    // Pickup dropped energy.
-                    if (targets.length > 0) {
-                        targets.sort((a, b) => b.energy - a.energy)
 
-                        if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(targets[0]);
+                    var containers = creep.room.find(FIND_STRUCTURES,
+                        {filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
+                        i.store[RESOURCE_ENERGY] > 100
+                        });
+
+                    // Fetch energy from container.
+                    if (containers.length > 0) {
+                        containers = containers.filter(container => container.store);
+                        containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY])
+
+                        if (containers[0].transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(containers[0]);
                         }
                         else {
-                            creep.say('Picking up');
-
-                            if (!creep.memory.moveTicks) {
-                                creep.memory.moveTicks = creep.memory.fullTicks - creep.ticksToLive;
-                            }
+                            creep.say('Container transferring');
                         }
-
                     }
                     else {
                         const sources = creep.room.find(FIND_SOURCES);
@@ -92,7 +93,9 @@ const roleBuilder = {
                         });
 
                     }
+
                 }
+
 
             }
             // Withdraw energy from closest place.
