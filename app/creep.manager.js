@@ -6,13 +6,13 @@ const roleSettings = {
     harvester : {
         weight: 0.3,
         body: [
-            // [WORK, CARRY, MOVE], // 200
-            // [WORK, WORK, CARRY, MOVE], // 300
+            [WORK, CARRY, MOVE], // 200
+            [WORK, WORK, CARRY, MOVE], // 300
             [WORK, WORK, WORK, CARRY, MOVE], // 400
             [WORK, WORK, WORK, WORK, CARRY, MOVE], // 500
             [WORK, WORK, WORK, MOVE, WORK, MOVE, WORK, CARRY, MOVE], // 700
         ],
-        max: 2,
+        max: 3,
     },
     mover : {
         weight: 0.2,
