@@ -82,9 +82,20 @@ class Role {
             cap = this.max;
         }
 
-        if (this.name == 'harvester' && cap > this.spawn.sourceCapacity) {
-            cap = this.spawn.sourceCapacity;
+        switch (this.name) {
+            case 'harvester':
+                if (cap > this.spawn.sourceCapacity) {
+                    cap = this.spawn.sourceCapacity;
+                }
+                break;
+
+            case 'mover':
+                if (cap > this.spawn.sourceCapacity) {
+                    cap = this.spawn.sourceCapacity;
+                }
+                break;
         }
+
 
         this.memory.cap = cap;
     }
