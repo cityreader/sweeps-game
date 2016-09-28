@@ -23,7 +23,11 @@ const roleBuilder = {
             }
             else {
                 var targets = creep.room.find(FIND_MY_STRUCTURES, {
-                    filter: (s) => s.energyCapacity !== undefined && s.energy < s.energyCapacity && s.structureType != STRUCTURE_STORAGE
+                    filter: (s) =>
+                        s.energyCapacity !== undefined &&
+                        s.energy < s.energyCapacity &&
+                        s.structureType != STRUCTURE_STORAGE &&
+                        s.structureType != STRUCTURE_TOWER
                 });
 
                 if (targets.length > 0) {
