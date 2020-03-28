@@ -7,7 +7,7 @@ Copy `Gruntfile.example.js` to `Gruntfile.js` and add credentials in the new fil
 ## Commit code from Github to Screeps
 
 ```
-grunt deploy
+npx grunt deploy
 ```
 
 Reference: https://docs.screeps.com/commit.html

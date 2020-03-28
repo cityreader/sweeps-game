@@ -6,10 +6,10 @@ module.exports = function(grunt) {
     grunt.initConfig({
         copy: {
             files: {
-                cwd: 'app',  // set working folder / root to copy
-                src: '**/*',           // copy all files and subfolders
+                cwd: 'app',      // set working folder / root to copy
+                src: '**/*',     // copy all files and subfolders
                 dest: 'dist',    // destination folder
-                expand: true           // required when using cwd
+                expand: true     // required when using cwd
             }
         },
 
@@ -19,7 +19,7 @@ module.exports = function(grunt) {
             options: {
                 email: '<your e-mail>',
                 password: '<your password>',
-                branch: 'default',
+                branch: 'default',   // The branch needs to be created in screeps first
                 ptr: false
             },
             dist: {
