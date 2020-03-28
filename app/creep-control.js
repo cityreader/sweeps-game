@@ -26,7 +26,8 @@ class CreepControl {
   run() {
     const role = this.getRole();
     const taskRunner = roleMap[role];
-    taskRunner.run(this.creep);
+    taskRunner.run(this);
+  }
   }
 }
 

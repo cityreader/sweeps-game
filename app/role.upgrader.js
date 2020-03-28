@@ -1,7 +1,7 @@
 const roleUpgrader = {
-
-    /** @param {Creep} creep **/
-    run(creep) {
+    
+    run(creepControl) {
+        const creep = creepControl.creep;
         this.boostrap(creep);
 
         if(creep.memory.upgrading && creep.carry.energy == 0) {

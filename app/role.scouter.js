@@ -3,8 +3,8 @@ const Role = require('Role');
 
 const roleScouter = {
 
-    /** @param {Creep} creep **/
-    run: function(creep) {
+    run(creepControl) {
+        const creep = creepControl.creep;
         // console.log('sss');
         // if(creep.room.controller) {
         // if(creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) {

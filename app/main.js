@@ -59,6 +59,7 @@ module.exports.loop = function () {
         creepManager.run();
     }
 
+    // Run creep role task runners.
     for (let name in Game.creeps) {
         let creep = Game.creeps[name];
         const creepControl = new CreepControl(creep);

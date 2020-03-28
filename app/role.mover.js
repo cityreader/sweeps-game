@@ -3,8 +3,8 @@ const Role = require('Role');
 
 const roleMover = {
 
-    /** @param {Creep} creep **/
-    run: function(creep) {
+    run(creepControl) {
+        const creep = creepControl.creep;
         this.bootstrap(creep);
 
         if (creep.memory.transferring) {
