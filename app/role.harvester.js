@@ -1,13 +1,14 @@
 const creepManager = require('creep.manager');
 const Role = require('Role');
+const RoleBase = require('role-base');
 
-const roleHarvester = {
+class RoleHarvester extends RoleBase {
 
     run(creepControl) {
         const creep = creepControl.creep;
         this.bootstrap(creep);
 
-        this.checkHealth(creep);
+        this.checkHealth(creepControl);
 
         if (creep.carry.energy < creep.carryCapacity) {
             // creep.say('harvesting');
@@ -96,7 +97,7 @@ const roleHarvester = {
         }
         creep.memory .lastTick = Game.time;
 
-    },
+    }
 
     bootstrap(creep) {
         if (creep.memory.booted && !Memory.flush) {
@@ -107,7 +108,7 @@ const roleHarvester = {
 
         const sources = creep.room.find(FIND_SOURCES);
 
-        for (let source of sources) {
+        for (const source of sources) {
             if (source.memory.blocked) {
                 break;
             }
@@ -126,43 +127,9 @@ const roleHarvester = {
         }
 
         creep.memory.booted = true;
-    },
-
-    checkHealth(creep) {
-        if (!creep.memory.sourceId) {
-            return;
-        }
-
-        const ticksToBuild = this.ticksToBuild(creep);
-
-
-
-        if (!creep.memory.offspring && creep.ticksToLive <= creep.memory.moveTicks + ticksToBuild) {
-            const source = Game.getObjectById(creep.memory.sourceId);
-
-            source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
-
-            const role = new Role(creep.spawn, creep.memory.role);
-            if (role.creepNum + 1 > role.memory.cap) {
-                return;
-            }
-
-            const spawns = creep.room.find(FIND_MY_SPAWNS);
-
-            if (spawns.length > 0) {
-                const spawn = spawns.shift();
-                // creepManager.createCreep(spawn, creep.memory.role);
-            }
-
-            creep.memory.offspring = true;
-        }
-    },
-
-    ticksToBuild(creep) {
-        const spawnTime = 3;
-        return creep.body.length * spawnTime;
     }
+}
 
-};
+const roleHarvester = new RoleHarvester();
 
 module.exports = roleHarvester;

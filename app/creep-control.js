@@ -5,6 +5,8 @@ const roleBuilder = require('role.builder');
 const roleRepairer = require('role.repairer');
 const roleScouter = require('role.scouter');
 
+const Role = require('Role');
+
 const roleMap = {
   harvester: roleHarvester,
   mover: roleMover,
@@ -28,6 +30,50 @@ class CreepControl {
     const taskRunner = roleMap[role];
     taskRunner.run(this);
   }
+
+  buildTime() {
+    const spawnTime = 3;
+    return this.creep.body.length * spawnTime;
+  }
+
+  checkHealth() {
+    if (!this.getMemory('sourceId')) {
+      return;
+    }
+
+    if (this.isTimeToCreateOffspring()) {
+      const source = Game.getObjectById(creep.memory.sourceId);
+
+      source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
+
+      const role = new Role(this.creep.spawn, this.getMemory('role'));
+      if (role.creepNum + 1 > role.memory.cap) {
+        return;
+      }
+
+      const spawns = this.creep.room.find(FIND_MY_SPAWNS);
+
+      if (spawns.length > 0) {
+        const spawn = spawns.shift();
+        // creepManager.createCreep(spawn, creep.memory.role);
+      }
+
+      this.creep.memory.offspring = true;
+    }
+  }
+
+  isTimeToCreateOffspring() {
+    const buildTime = this.buildTime();
+    return !this.hasOffspring() &&
+           this.creep.ticksToLive <= this.getMemory('moveTicks') + buildTime;
+  }
+
+  hasOffspring() {
+    return this.getMemory('offspring');
+  }
+
+  getMemory(prop) {
+    return this.creep.memory[prop];
   }
 }
 
