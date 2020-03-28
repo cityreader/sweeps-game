@@ -58,7 +58,7 @@ const roleRepairer = {
                     }
                 }
                 else {
-                    var targets = creep.room.find(FIND_DROPPED_ENERGY);
+                    var targets = creep.room.find(FIND_DROPPED_RESOURCES);
                     // Pickup dropped energy.
                     if (targets.length > 0) {
                         targets.sort((a, b) => b.energy - a.energy)

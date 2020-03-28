@@ -50,7 +50,7 @@ const roleMover = {
                 }
             }
             else {
-                var targets = creep.room.find(FIND_DROPPED_ENERGY);
+                var targets = creep.room.find(FIND_DROPPED_RESOURCES);
                 if (targets.length > 0) {
                     targets.sort((a, b) => b.energy - a.energy)
 
