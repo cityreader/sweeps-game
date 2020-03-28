@@ -3,12 +3,7 @@ var utilities = require('utilities');
 
 var ai = require('ai');
 
-var roleHarvester = require('role.harvester');
-var roleMover = require('role.mover');
-var roleUpgrader = require('role.upgrader');
-var roleBuilder = require('role.builder');
-var roleRepairer = require('role.repairer');
-var roleScouter = require('role.scouter');
+const CreepControl = require('creep-control');
 
 const CreepManager = require('creep.manager');
 
@@ -66,33 +61,10 @@ module.exports.loop = function () {
 
     for (let name in Game.creeps) {
         let creep = Game.creeps[name];
-        switch (creep.memory.role) {
-            case 'harvester':
-                roleHarvester.run(creep);
-                break;
-
-            case 'mover':
-                roleMover.run(creep);
-                break;
-
-            case 'upgrader':
-                roleUpgrader.run(creep);
-                break;
-
-            case 'builder':
-                roleBuilder.run(creep);
-                break;
-
-            case 'repairer':
-                roleRepairer.run(creep);
-                break;
-
-            case 'scouter':
-                roleScouter.run(creep);
-        }
-
+        const creepControl = new CreepControl(creep);
+        creepControl.run();
     }
 
     Memory.flush = false;
 
-}
+};
