@@ -13,6 +13,8 @@ module.exports = function(grunt) {
             }
         },
 
+        // Commit code from Github to screeps.
+        // @see https://docs.screeps.com/commit.html
         screeps: {
             options: {
                 email: '<your e-mail>',
@@ -29,4 +31,4 @@ module.exports = function(grunt) {
     // Default task(s).
     grunt.registerTask('default', ['copy']);
     grunt.registerTask('deploy', ['copy', 'screeps']);
-}
+};
