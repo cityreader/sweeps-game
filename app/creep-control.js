@@ -36,6 +36,35 @@ class CreepControl {
     return this.creep.body.length * spawnTime;
   }
 
+  boot() {
+    if (this.getMemory('booted') && !Memory.flush) {
+      return;
+    }
+
+    console.log(`${this.creep} booting`);
+
+    const sources = this.creep.room.find(FIND_SOURCES);
+
+    for (const source of sources) {
+      if (source.memory.blocked) {
+        break;
+      }
+
+      let cap = source.memory.max || source.memory.capacity;
+      if (source.memory.workers.length < cap) {
+        source.memory.workers.push(this.creep.id);
+        this.setMemory('sourceId', source.id);
+        break;
+      }
+    }
+
+    if (!this.getMemory('fullTicks')) {
+      this.setMemory('fullTicks', this.creep.ticksToLive);
+    }
+
+    this.setMemory('booted', true);
+  }
+
   checkHealth() {
     if (!this.getMemory('sourceId')) {
       return;
@@ -58,7 +87,7 @@ class CreepControl {
         // creepManager.createCreep(spawn, creep.memory.role);
       }
 
-      this.creep.memory.offspring = true;
+      this.setMemory('offspring', true);
     }
   }
 
@@ -74,6 +103,10 @@ class CreepControl {
 
   getMemory(prop) {
     return this.creep.memory[prop];
+  }
+
+  setMemory(prop, value) {
+    this.creep.memory[prop] = value;
   }
 }
 

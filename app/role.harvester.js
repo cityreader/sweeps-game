@@ -6,8 +6,7 @@ class RoleHarvester extends RoleBase {
 
     run(creepControl) {
         const creep = creepControl.creep;
-        this.bootstrap(creep);
-
+        creepControl.boot();
         this.checkHealth(creepControl);
 
         if (creep.carry.energy < creep.carryCapacity) {
@@ -97,36 +96,6 @@ class RoleHarvester extends RoleBase {
         }
         creep.memory .lastTick = Game.time;
 
-    }
-
-    bootstrap(creep) {
-        if (creep.memory.booted && !Memory.flush) {
-            return;
-        }
-
-        console.log(`${creep} booting`);
-
-        const sources = creep.room.find(FIND_SOURCES);
-
-        for (const source of sources) {
-            if (source.memory.blocked) {
-                break;
-            }
-
-            let cap = source.memory.max || source.memory.capacity;
-            if (source.memory.workers.length < cap) {
-
-                source.memory.workers.push(creep.id);
-                creep.memory.sourceId = source.id;
-                break;
-            }
-        }
-
-        if (!creep.memory.fullTicks) {
-            creep.memory.fullTicks = creep.ticksToLive;
-        }
-
-        creep.memory.booted = true;
     }
 }
 
