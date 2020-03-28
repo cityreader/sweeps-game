@@ -1,4 +1,6 @@
-const roleRepairer = {
+const RoleBase = require('role-base');
+
+class RoleRepairer extends RoleBase {
 
     run(creepControl) {
         const creep = creepControl.creep;
@@ -113,14 +115,15 @@ const roleRepairer = {
             console.log(creep.name + " missed a tick!");
         }
         creep.memory .lastTick = Game.time;
-    },
+    }
 
     carryCapacity(creep) {
         const carryPartNum = creep.body.filter(part => part.type == CARRY).length;
         return carryPartNum * 50;
-    },
+    }
 
-};
+}
 
+const roleRepairer = new RoleRepairer();
 
 module.exports = roleRepairer;

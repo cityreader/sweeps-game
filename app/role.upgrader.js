@@ -1,4 +1,6 @@
-const roleUpgrader = {
+const RoleBase = require('role-base');
+
+class RoleUpgrader extends RoleBase {
     
     run(creepControl) {
         const creep = creepControl.creep;
@@ -104,7 +106,7 @@ const roleUpgrader = {
             console.log(creep.name + " missed a tick!");
         }
         creep.memory .lastTick = Game.time;
-    },
+    }
 
     boostrap(creep) {
         if (Memory.controllers === undefined) {
@@ -132,13 +134,15 @@ const roleUpgrader = {
             Memory.controllers[controllerId] = closest.id;
             // console.log(`Memory.controllers[${controllerId}] ${Memory.controllers[controllerId]}`)
         }
-    },
+    }
 
     carryCapacity(creep) {
         const carryPartNum = creep.body.filter(part => part.type == CARRY).length;
         return carryPartNum * 50;
-    },
+    }
 
-};
+}
+
+const roleUpgrader = new RoleUpgrader();
 
 module.exports = roleUpgrader;
