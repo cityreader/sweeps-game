@@ -1,5 +1,4 @@
 const creepManager = require('creep.manager');
-const Role = require('Role');
 const RoleBase = require('role-base');
 
 class RoleHarvester extends RoleBase {
@@ -39,10 +38,10 @@ class RoleHarvester extends RoleBase {
             }
         }
         else {
-            const moverRole = new Role(creep.spawn, 'mover');
+            const moverCount = creepControl.getRoleCount('mover');
 
             // Drop energy when there is a mover.
-            if (moverRole.creepNum >= 1) {
+            if (moverCount >= 1) {
                 var containers = creep.pos.findInRange(FIND_STRUCTURES, 1,
                     {filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
                                     _.sum(i.store) < i.storeCapacity});

@@ -4,7 +4,7 @@ var utilities = require('utilities');
 
 var ai = require('ai');
 
-const CreepControl = require('creep-control');
+
 
 const CreepManager = require('creep.manager');
 
@@ -14,6 +14,8 @@ module.exports.loop = function () {
 
     const GodView = require('god-view');
     console.log('GodView', JSON.stringify(GodView));
+
+    const CreepControl = require('creep-control');
 
     var tower = Game.getObjectById('57dfcffeb4a8672d0fe825b5');
     if (tower) {

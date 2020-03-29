@@ -5,8 +5,6 @@ const roleBuilder = require('role.builder');
 const roleRepairer = require('role.repairer');
 const roleScouter = require('role.scouter');
 
-const Role = require('Role');
-
 const roleMap = {
   harvester: roleHarvester,
   mover: roleMover,
@@ -74,9 +72,9 @@ class CreepControl {
       const source = Game.getObjectById(creep.memory.sourceId);
 
       source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
+      const creepWithSameRoleCount = creepControl.getRoleCount();
 
-      const role = new Role(this.creep.spawn, this.getMemory('role'));
-      if (role.creepNum + 1 > role.memory.cap) {
+      if (creepWithSameRoleCount + 1 > this.getRoleCap()) {
         return;
       }
 
@@ -89,6 +87,14 @@ class CreepControl {
 
       this.setMemory('offspring', true);
     }
+  }
+
+  getRoleCount(roleName = this.getMemory('role')) {
+    return GodView.creepStats[this.creep.spawn.name][roleName];
+  }
+
+  getRoleCap(roleName = this.getMemory('role')) {
+    return GodView.creepCap[this.creep.spawn.name].roles[role].cap;
   }
 
   isTimeToCreateOffspring() {

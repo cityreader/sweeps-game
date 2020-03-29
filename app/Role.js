@@ -55,17 +55,7 @@ class Role {
     }
 
     get creepNum() {
-        return _.reduce(Game.creeps,
-            (sum, creep) => {
-                if (creep.room === this.spawn.room && creep.memory.role === this.name) {
-                    return sum + 1;
-                }
-                else {
-                    return sum;
-                }
-
-            }
-            , 0);
+        return GodView.creepStats[this.spawn.name][this.name];
     }
 
     getCapByWeight() {

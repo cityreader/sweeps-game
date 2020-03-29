@@ -16,11 +16,15 @@ const creepStats = creeps.reduce((stats, creep) => {
   return stats;
 }, {});
 
+const creepCaps = Memory.roleControllers;
+
 GodView = {
   creepCount: creeps.length,
   creepStats,
+  creepCaps,
 };
 
+// Export GodView to global object.
 global.GodView = GodView;
 
 module.exports = GodView;
