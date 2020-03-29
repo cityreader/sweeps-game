@@ -27,6 +27,8 @@ class CreepControl {
     const role = this.getRole();
     const taskRunner = roleMap[role];
     taskRunner.run(this);
+
+    this.checkMissedTick();
   }
 
   buildTime() {
@@ -105,6 +107,13 @@ class CreepControl {
 
   hasOffspring() {
     return this.getMemory('offspring');
+  }
+
+  checkMissedTick() {
+    if (this.getMemory('lastTick') != Game.time - 1) {
+      console.log(`${this.creep.name} (${this.getMemory('role')}) missed a tick!`);
+    }
+    this.setMemory('lastTick', Game.time);
   }
 
   getMemory(prop) {

@@ -141,11 +141,6 @@ class RoleBuilder extends RoleBase {
             // }
 
         }
-
-        if (creep.memory.lastTick != Game.time - 1) {
-            console.log(creep.name + " missed a tick!");
-        }
-        creep.memory .lastTick = Game.time;
     }
 
     carryCapacity(creep) {
