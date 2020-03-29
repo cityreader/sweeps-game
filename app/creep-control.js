@@ -74,7 +74,7 @@ class CreepControl {
       const source = Game.getObjectById(this.creep.memory.sourceId);
 
       source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
-      const creepWithSameRoleCount = creepControl.getRoleCount();
+      const creepWithSameRoleCount = this.getRoleCount();
 
       if (creepWithSameRoleCount + 1 > this.getRoleCap()) {
         return;
@@ -96,7 +96,7 @@ class CreepControl {
   }
 
   getRoleCap(roleName = this.getMemory('role')) {
-    return GodView.creepCap[this.creep.spawn.name].roles[role].cap;
+    return GodView.creepCaps[this.creep.spawn.name].roles[roleName].cap;
   }
 
   isTimeToCreateOffspring() {
