@@ -5,9 +5,10 @@ class RoleMover extends RoleBase {
 
     run(creepControl) {
         const creep = creepControl.creep;
-        this.bootstrap(creep);
 
-        // this.checkHealth(creepControl);
+        creepControl.boot();
+
+        // creepControl.checkHealth();
 
         if (creep.memory.transferring) {
             creep.memory.transferring = (creep.carry.energy != 0);

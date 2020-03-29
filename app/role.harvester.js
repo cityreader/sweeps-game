@@ -6,7 +6,7 @@ class RoleHarvester extends RoleBase {
     run(creepControl) {
         const creep = creepControl.creep;
         creepControl.boot();
-        this.checkHealth(creepControl);
+        creepControl.checkHealth();
 
         if (creep.carry.energy < creep.carryCapacity) {
             // creep.say('harvesting');
