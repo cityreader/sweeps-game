@@ -1,21 +1,20 @@
 require('prototype.extend');
 
+const godViewFactory = require('god-view');
+const CreepControl = require('creep-control');
+
 var utilities = require('utilities');
 
 var ai = require('ai');
 
-
-
 const CreepManager = require('creep.manager');
 
 module.exports.loop = function () {
-
-    ai.run();
-
-    const GodView = require('god-view');
+    // Export GodView to global object.
+    global.GodView = godViewFactory();
     console.log('GodView', JSON.stringify(GodView));
 
-    const CreepControl = require('creep-control');
+    ai.run();
 
     var tower = Game.getObjectById('57dfcffeb4a8672d0fe825b5');
     if (tower) {

@@ -1,30 +1,29 @@
-const creeps = Object.values(Game.creeps);
+const godViewFactory = () => {
+  const creeps = Object.values(Game.creeps);
 
-const creepStats = creeps.reduce((stats, creep) => {
-  const spawnName = creep.spawn.name;
-  if (!stats[spawnName]) {
-    stats[spawnName] = {};
-  }
+  const creepStats = creeps.reduce((stats, creep) => {
+    const spawnName = creep.spawn.name;
+    if (!stats[spawnName]) {
+      stats[spawnName] = {};
+    }
 
-  const creepRole = creep.memory.role;
-  if (!stats[spawnName][creepRole]) {
-    stats[spawnName][creepRole] = 0;
-  }
+    const creepRole = creep.memory.role;
+    if (!stats[spawnName][creepRole]) {
+      stats[spawnName][creepRole] = 0;
+    }
+    console.log(`Creep ${creep.name} [${creepRole}]`);
+    stats[spawnName][creepRole] += 1;
 
-  stats[spawnName][creepRole] += 1;
+    return stats;
+  }, {});
 
-  return stats;
-}, {});
+  const creepCaps = Memory.roleControllers;
 
-const creepCaps = Memory.roleControllers;
-
-GodView = {
-  creepCount: creeps.length,
-  creepStats,
-  creepCaps,
+  return {
+    creepCount: creeps.length,
+    creepStats,
+    creepCaps,
+  };
 };
 
-// Export GodView to global object.
-global.GodView = GodView;
-
-module.exports = GodView;
+module.exports = godViewFactory;
