@@ -1,4 +1,5 @@
 require('prototype.extend');
+
 var utilities = require('utilities');
 
 var ai = require('ai');
@@ -10,6 +11,9 @@ const CreepManager = require('creep.manager');
 module.exports.loop = function () {
 
     ai.run();
+
+    const GodView = require('god-view');
+    console.log('GodView', JSON.stringify(GodView));
 
     var tower = Game.getObjectById('57dfcffeb4a8672d0fe825b5');
     if (tower) {
