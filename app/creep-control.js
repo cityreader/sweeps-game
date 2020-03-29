@@ -73,7 +73,7 @@ class CreepControl {
     if (this.isTimeToCreateOffspring()) {
       const source = Game.getObjectById(this.creep.memory.sourceId);
 
-      source.memory.workers = source.memory.workers.filter(creepId => creepId != creep.id);
+      source.memory.workers = source.memory.workers.filter(creepId => creepId != this.creep.id);
       const creepWithSameRoleCount = this.getRoleCount();
 
       if (creepWithSameRoleCount + 1 > this.getRoleCap()) {
