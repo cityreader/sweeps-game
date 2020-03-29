@@ -36,7 +36,7 @@ class RoleUpgrader extends RoleBase {
                     containers = containers.filter(container => container.store);
                     containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY]);
 
-                    if (containers[0].transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    if (creep.withdraw(containers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(containers[0]);
                     }
                     else {
