@@ -8,15 +8,14 @@ class RoleHarvester extends RoleBase {
     creepControl.checkHealth();
 
     if (creep.store.getFreeCapacity() > 0) {
-      // creep.say('harvesting');
-      const source = this.getSource(creep);
-
+      const source = creepControl.getSource();
       if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(source);
+        creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
       }
       else {
         this.getMoveTicks(creep);
       }
+      creep.say('⛏ harvest');
     }
     else {
       const moverCount = creepControl.getRoleCount('mover');
@@ -74,28 +73,6 @@ class RoleHarvester extends RoleBase {
 
     }
 
-  }
-
-  getSource(creep) {
-    let source;
-
-    if (creep.memory.sourceId) {
-      source = Game.getObjectById(creep.memory.sourceId);
-    }
-    else {
-      let sources = creep.room.find(FIND_SOURCES);
-      source = sources[0];
-    }
-
-    if (source.energy === 0) {
-      let sources = creep.room.find(FIND_SOURCES, {
-        filter: t => t.energy > 0,
-      });
-      source = sources[0];
-      creep.memory.sourceId = source.id;
-    }
-
-    return source;
   }
 }
 

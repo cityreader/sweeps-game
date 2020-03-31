@@ -116,6 +116,32 @@ class CreepControl {
     this.setMemory('lastTick', Game.time);
   }
 
+  getSource() {
+    let source;
+    const sourceId = this.getMemory('sourceId');
+
+    if (sourceId) {
+      source = Game.getObjectById(sourceId);
+    }
+
+    if (!source || source.energy === 0) {
+      let sources = this.creep.room.find(FIND_SOURCES, {
+        filter: t => t.energy > 0,
+      });
+      source = sources[0];
+    }
+
+    this.updateSource(source);
+    return source;
+  }
+
+  updateSource(source) {
+    if (this.getMemory('sourceId') !== source.id) {
+      this.creep.memory.sourceId = source.id;
+      this.creep.say('🔄 source');
+    }
+  }
+
   getMemory(prop) {
     return this.creep.memory[prop];
   }

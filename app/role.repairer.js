@@ -6,7 +6,7 @@ class RoleRepairer extends RoleBase {
     const creep = creepControl.creep;
     if (creep.memory.building && creep.carry.energy == 0) {
       creep.memory.building = false;
-      creep.say('harvesting');
+      creep.say('⛏ harvest');
     }
 
     if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
