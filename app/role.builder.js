@@ -43,7 +43,7 @@ class RoleBuilder extends RoleBase {
       }
     }
     else {
-      const carryCapacity = this.carryCapacity(creep);
+      const carryCapacity = creepControl.carryCapacity;
 
       // Harvest energy when room energy is not enough for creating an extra creep.
       if (true || (carryCapacity + 600 > creep.room.energyAvailable)) {
@@ -139,11 +139,6 @@ class RoleBuilder extends RoleBase {
       // }
 
     }
-  }
-
-  carryCapacity(creep) {
-    const carryPartNum = creep.body.filter(part => part.type == CARRY).length;
-    return carryPartNum * 50;
   }
 
 }

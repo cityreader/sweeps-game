@@ -22,7 +22,7 @@ class RoleUpgrader extends RoleBase {
       }
     }
     else {
-      const carryCapacity = this.carryCapacity(creep);
+      const carryCapacity = creepControl.carryCapacity;
 
       // Harvest energy when room energy is not enough for creating an extra creep.
       if (carryCapacity + 700 > creep.room.energyAvailable) {
@@ -129,11 +129,6 @@ class RoleUpgrader extends RoleBase {
       Memory.controllers[controllerId] = closest.id;
       // console.log(`Memory.controllers[${controllerId}] ${Memory.controllers[controllerId]}`)
     }
-  }
-
-  carryCapacity(creep) {
-    const carryPartNum = creep.body.filter(part => part.type == CARRY).length;
-    return carryPartNum * 50;
   }
 
 }

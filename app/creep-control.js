@@ -110,7 +110,7 @@ class CreepControl {
   }
 
   checkMissedTick() {
-    if (this.getMemory('lastTick') != Game.time - 1) {
+    if (this.getMemory('lastTick') !== Game.time - 1) {
       console.log(`${this.creep.name} (${this.getMemory('role')}) missed a tick!`);
     }
     this.setMemory('lastTick', Game.time);
@@ -139,6 +139,22 @@ class CreepControl {
       this.creep.say('🔄 source');
     }
   }
+
+  /**
+   * Computed attributes
+   */
+
+  /**
+   * 
+   */
+  get carryCapacity() {
+    const carryPartNum = this.creep.body.filter(part => part.type == CARRY).length;
+    return carryPartNum * 50;
+  }
+
+  /**
+   * Utils
+   */
 
   getMemory(prop) {
     return this.creep.memory[prop];
