@@ -71,6 +71,9 @@ module.exports.loop = function () {
         creepControl.run();
     }
 
+    Object.entries(Game.rooms).forEach(([name, room]) => 
+        console.log(`Room ${name} energy available ${room.energyAvailable}`));
+
     Memory.flush = false;
 
 };

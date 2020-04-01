@@ -26,8 +26,6 @@ class RoleMover extends RoleBase {
         }
         else {
           creep.say('Transferring')
-
-          console.log(`${creep.room} energy ${creep.room.energyAvailable}`);
         }
       }
 
