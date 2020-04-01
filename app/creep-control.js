@@ -125,9 +125,7 @@ class CreepControl {
     }
 
     if (!source || source.energy === 0) {
-      let sources = this.creep.room.find(FIND_SOURCES, {
-        filter: t => t.energy > 0,
-      });
+      let sources = this.creep.room.find(FIND_SOURCES_ACTIVE);
       source = sources[0];
     }
 
