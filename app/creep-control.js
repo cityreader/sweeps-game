@@ -126,13 +126,24 @@ class CreepControl {
       source = Game.getObjectById(sourceId);
     }
 
-    if (!source || source.energy === 0) {
-      let sources = this.creep.room.find(FIND_SOURCES_ACTIVE);
+    if (!source || source.energy === 0 || this.sourceCapcityIsFull(sourceId)) {
+      let sources = this.creep.room.find(FIND_SOURCES_ACTIVE, {
+        filter: s => s.id !== sourceId,
+      });
       source = sources[0];
     }
 
     this.updateSource(source);
     return source;
+  }
+
+  sourceCapcityIsFull(sourceId) {
+    const occupiedNumber = Object.values(Game.creeps).filter(
+      c => c.memory.lastStatus === CreepCustomStatus.HARVEST_ENERGY &&
+           c.memory.sourceId === sourceId
+    );
+
+    return occupiedNumber >= Memory.sources[sourceId];
   }
 
   updateSource(source) {
@@ -141,6 +152,24 @@ class CreepControl {
       this.creep.say('🔄 source');
     }
   }
+
+  /**
+   * Computed attributes
+   */
+
+  /**
+   * 
+   */
+  get carryCapacity() {
+    const carryPartNum = this.creep.body.filter(part => part.type == CARRY).length;
+    return carryPartNum * 50;
+  }
+
+
+
+  /**
+   * Creep utils
+   */
 
   say(status) {
     const message = CreepCustomMessage[status];
@@ -158,19 +187,39 @@ class CreepControl {
   }
 
   /**
-   * Computed attributes
+   * Search utils.
    */
 
-  /**
-   * 
-   */
-  get carryCapacity() {
-    const carryPartNum = this.creep.body.filter(part => part.type == CARRY).length;
-    return carryPartNum * 50;
+  findStructure(types, customFilter = undefined) {
+    const filter = s => {
+      if (!types.includes(s.structureType) || !s.isActive()) {
+        return false;
+      }
+
+      if (customFilter) {
+        return customFilter(s);
+      }
+      
+      return true;
+    };
+    
+    return this.creep.room.find(FIND_STRUCTURES, {
+      filter,
+    });
+  }
+
+  findStructureWitchFreeCapacity(types) {
+    const customFilter = s => s.store.getFreeCapacity([RESOURCE_ENERGY]);
+    return this.findStructure(types, customFilter);
+  }
+
+  findContainerWitchMinimumEnergy(minEnergy) {
+    const customFilter = s => s.store[RESOURCE_ENERGY] > minEnergy;
+    return this.findStructure([STRUCTURE_CONTAINER], customFilter);
   }
 
   /**
-   * Utils
+   * General utils.
    */
 
   getMemory(prop) {

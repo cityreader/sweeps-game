@@ -1,3 +1,4 @@
+const { CreepCustomStatus } = require('constants');
 const RoleBase = require('role-base');
 
 class RoleUpgrader extends RoleBase {
@@ -27,11 +28,7 @@ class RoleUpgrader extends RoleBase {
       // Harvest energy when room energy is not enough for creating an extra creep.
       if (carryCapacity + 700 > creep.room.energyAvailable) {
 
-        var containers = creep.room.find(FIND_STRUCTURES,
-          {
-            filter: (i) => i.structureType == STRUCTURE_CONTAINER &&
-              i.store[RESOURCE_ENERGY] > 100
-          });
+        let containers = creepControl.findContainerWitchMinimumEnergy(100);
 
         // Fetch energy from container.
         if (containers.length > 0) {
@@ -87,16 +84,32 @@ class RoleUpgrader extends RoleBase {
       }
       // Withdraw energy from closest place.
       else {
-        const controllerId = creep.room.controller.id;
-        const energySourceId = Memory.controllers[controllerId];
-        const energySource = Game.getObjectById(energySourceId);
+        let targets = creep.room.find(FIND_DROPPED_RESOURCES);
+        if (targets.length > 0) {
+          targets.sort((a, b) => b.energy - a.energy)
 
-        if (creep.withdraw(energySource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          creep.moveTo(energySource);
+          if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(targets[0]);
+          }
+          else {
+            this.getMoveTicks(creep);
+            creepControl.say(CreepCustomStatus.PICK_UP_ENERGY);
+          }
+
+        } else {
+          const controllerId = creep.room.controller.id;
+          const energySourceId = Memory.controllers[controllerId];
+          const energySource = Game.getObjectById(energySourceId);
+
+          if (creep.withdraw(energySource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(energySource);
+          }
+          else {
+            creep.say('Withdrawing');
+          }
         }
-        else {
-          creep.say('Withdrawing');
-        }
+
+
       }
 
     }

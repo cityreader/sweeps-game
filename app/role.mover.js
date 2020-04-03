@@ -1,3 +1,4 @@
+const { CreepCustomStatus } = require('constants');
 const RoleBase = require('role-base');
 
 class RoleMover extends RoleBase {
@@ -10,58 +11,62 @@ class RoleMover extends RoleBase {
     // creepControl.checkHealth();
 
     if (creep.memory.transferring) {
-      creep.memory.transferring = (creep.carry.energy != 0);
+      creep.memory.transferring = creep.carry.energy > 0;
     } else {
-      creep.memory.transferring = (creep.carry.energy == creep.carryCapacity);
+      creep.memory.transferring = creep.carry.energy === creep.carryCapacity;
     }
 
     if (creep.memory.transferring) {
-      var targets = creep.room.find(FIND_MY_STRUCTURES, {
-        filter: (s) => s.energyCapacity !== undefined && s.energy < s.energyCapacity && s.structureType != STRUCTURE_STORAGE
-      });
+      let targets = creepControl.findStructureWitchFreeCapacity([STRUCTURE_EXTENSION]);
+
+      // Transfer to container if extension is full.
+      if (!targets) {
+        targets = creepControl.findStructureWitchFreeCapacity([STRUCTURE_CONTAINER]);
+      }
+
+      console.log('targets', JSON.stringify(targets));
 
       if (targets.length > 0) {
         if (creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
           creep.moveTo(targets[0]);
         }
         else {
-          creep.say('Transferring')
+          creepControl.say(CreepCustomStatus.TRANSFER_ENERGY);
         }
       }
 
     }
     else {
-      var containers = creep.room.find(FIND_STRUCTURES, {
-        filter: (i) =>
-          i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0
-      });
+      let targets = creep.room.find(FIND_DROPPED_RESOURCES);
+      if (targets.length > 0) {
+        targets.sort((a, b) => b.energy - a.energy)
 
-      // Fetch energy from container.
-      if (containers.length > 0) {
-        // console.log(JSON.stringify(containers, null, '\t'))
-        // containers = containers.filter(container => container.store);
-        containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY])
-
-        if (creep.withdraw(containers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          creep.moveTo(containers[0]);
+        if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(targets[0]);
         }
         else {
-          creep.say('Container transferring');
+          this.getMoveTicks(creep);
+          creepControl.say(CreepCustomStatus.PICK_UP_ENERGY);
         }
-      }
-      else {
-        var targets = creep.room.find(FIND_DROPPED_RESOURCES);
-        if (targets.length > 0) {
-          targets.sort((a, b) => b.energy - a.energy)
 
-          if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(targets[0]);
+      } else {
+        var containers = creep.room.find(FIND_STRUCTURES, {
+          filter: (i) =>
+            i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0
+        });
+
+        // Fetch energy from container.
+        if (containers.length > 0) {
+          // console.log(JSON.stringify(containers, null, '\t'))
+          // containers = containers.filter(container => container.store);
+          containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY]);
+
+          if (creep.withdraw(containers[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(containers[0]);
           }
           else {
-            creep.say('Picking up');
-            this.getMoveTicks(creep);
+            creepControl.say(CreepCustomStatus.WITHDRAW_ENERGY);
           }
-
         }
       }
 
