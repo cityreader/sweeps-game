@@ -1,3 +1,5 @@
+const { CreepCustomStatus, CreepCustomMessage } = require('constants');
+
 const roleHarvester = require('role.harvester');
 const roleMover = require('role.mover');
 const roleUpgrader = require('role.upgrader');
@@ -137,6 +139,21 @@ class CreepControl {
     if (this.getMemory('sourceId') !== source.id) {
       this.creep.memory.sourceId = source.id;
       this.creep.say('🔄 source');
+    }
+  }
+
+  say(status) {
+    const message = CreepCustomMessage[status];
+    if (message) {
+      this.updateStatus(status, message);
+    }
+  }
+
+  updateStatus(status, message) {
+    const lastStatus = this.getMemory('lastStatus');
+    if (lastStatus !== status) {
+      this.setMemory('lastStatus', status);
+      this.creep.say(message);
     }
   }
 

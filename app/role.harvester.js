@@ -1,3 +1,4 @@
+const { CreepCustomStatus } = require('constants');
 const RoleBase = require('role-base');
 
 class RoleHarvester extends RoleBase {
@@ -9,13 +10,14 @@ class RoleHarvester extends RoleBase {
 
     if (creep.store.getFreeCapacity() > 0) {
       const source = creepControl.getSource();
-      if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+      if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
         creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
+        creepControl.say(CreepCustomStatus.MOVE);
       }
       else {
         this.getMoveTicks(creep);
+        creepControl.say(CreepCustomStatus.HARVEST_ENERGY);
       }
-      creep.say('⛏ harvest');
     }
     else {
       const moverCount = creepControl.getRoleCount('mover');
@@ -65,8 +67,10 @@ class RoleHarvester extends RoleBase {
         });
 
         if (targets.length > 0) {
-          if (creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+          if (creep.transfer(targets[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
             creep.moveTo(targets[0]);
+          } else {
+            creepControl.say(CreepCustomStatus.TRANSFER_ENERGY);
           }
         }
       }
