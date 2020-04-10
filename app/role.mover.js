@@ -45,7 +45,7 @@ class RoleMover extends RoleBase {
           creep.moveTo(targets[0]);
         }
         else {
-          this.getMoveTicks(creep);
+          this.saveMoveTicks(creep);
           creepControl.say(CreepCustomStatus.PICK_UP_ENERGY);
         }
 

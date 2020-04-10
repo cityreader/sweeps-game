@@ -71,7 +71,7 @@ class RoleRepairer extends RoleBase {
             }
             else {
               creep.say('Picking up');
-              this.getMoveTicks(creep);
+              this.saveMoveTicks(creep);
             }
 
           }

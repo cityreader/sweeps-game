@@ -53,7 +53,7 @@ class RoleUpgrader extends RoleBase {
             }
             else {
               creep.say('Picking up');
-              this.getMoveTicks(creep);
+              this.saveMoveTicks(creep);
             }
 
           }
@@ -92,7 +92,7 @@ class RoleUpgrader extends RoleBase {
             creep.moveTo(targets[0]);
           }
           else {
-            this.getMoveTicks(creep);
+            this.saveMoveTicks(creep);
             creepControl.say(CreepCustomStatus.PICK_UP_ENERGY);
           }
 

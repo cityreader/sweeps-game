@@ -15,7 +15,7 @@ class RoleHarvester extends RoleBase {
         creepControl.say(CreepCustomStatus.MOVE);
       }
       else {
-        this.getMoveTicks(creep);
+        this.saveMoveTicks(creep);
         creepControl.say(CreepCustomStatus.HARVEST_ENERGY);
       }
     }
