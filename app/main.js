@@ -7,7 +7,7 @@ var utilities = require('utilities');
 
 var ai = require('ai');
 
-const CreepManager = require('creep.manager');
+const CreepManager = require('creep-manager');
 
 module.exports.loop = function () {
     // Export GodView to global object.
