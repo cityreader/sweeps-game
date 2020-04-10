@@ -118,6 +118,10 @@ class CreepControl {
     this.setMemory('lastTick', Game.time);
   }
 
+  isWaiting() {
+
+  }
+
   getSource() {
     let source;
     const sourceId = this.getMemory('sourceId');
@@ -154,6 +158,38 @@ class CreepControl {
   }
 
   /**
+   * Actions
+   */
+
+  pickupEnergy(target) {
+    if (this.creep.pickup(target) === ERR_NOT_IN_RANGE) {
+      this.creep.moveTo(target);
+    }
+    else {
+      this.saveMoveTicks(this.creep);
+      this.say(CreepCustomStatus.PICK_UP_ENERGY);
+    }
+  }
+
+  transferEnergy(target) {
+    if (this.creep.transfer(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+      this.creep.moveTo(target);
+    }
+    else {
+      this.say(CreepCustomStatus.TRANSFER_ENERGY);
+    }
+  }
+
+  withdrawEnergy(target) {
+    if (this.creep.withdraw(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+      this.creep.moveTo(target);
+    }
+    else {
+      this.say(CreepCustomStatus.WITHDRAW_ENERGY);
+    }
+  }
+
+  /**
    * Computed attributes
    */
 
@@ -164,8 +200,6 @@ class CreepControl {
     const carryPartNum = this.creep.body.filter(part => part.type == CARRY).length;
     return carryPartNum * 50;
   }
-
-
 
   /**
    * Creep utils
@@ -183,6 +217,12 @@ class CreepControl {
     if (lastStatus !== status) {
       this.setMemory('lastStatus', status);
       this.creep.say(message);
+    }
+  }
+
+  saveMoveTicks() {
+    if (!this.getMemory('moveTicks')) {
+      this.setMemory('moveTicks', this.getMemory('fullTicks') - this.creep.ticksToLive);
     }
   }
 
@@ -210,12 +250,29 @@ class CreepControl {
 
   findStructureWitchFreeCapacity(types) {
     const customFilter = s => s.store.getFreeCapacity([RESOURCE_ENERGY]);
-    return this.findStructure(types, customFilter);
+    const targets = this.findStructure(types, customFilter);
+    return targets ? targets[0] : null;
   }
 
   findContainerWitchMinimumEnergy(minEnergy) {
     const customFilter = s => s.store[RESOURCE_ENERGY] > minEnergy;
     return this.findStructure([STRUCTURE_CONTAINER], customFilter);
+  }
+
+  findDroppedResource() {
+    const targets = this.creep.room.find(FIND_DROPPED_RESOURCES);
+    return targets ? this.findTargetWithMoreEnergy(targets) : null;
+  }
+
+  findContainerAndStorageWithEnergy() {
+    const customFilter = s => s.store[RESOURCE_ENERGY] > 0;
+    const targets = this.findStructure([STRUCTURE_STORAGE, STRUCTURE_CONTAINER], customFilter);
+    return targets ? targets[0] : null;
+  }
+
+  findTargetWithMoreEnergy(targets) {
+    targets.sort((a, b) => a.energy - b.energy);
+    return targets.reverse()[0];
   }
 
   /**

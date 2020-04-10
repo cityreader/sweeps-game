@@ -10,68 +10,21 @@ class RoleMover extends RoleBase {
 
     // creepControl.checkHealth();
 
-    if (creep.memory.transferring) {
-      creep.memory.transferring = creep.carry.energy > 0;
+    let isTranferring = creepControl.getMemory('transferring');
+
+    if (isTranferring) {
+      isTranferring = creep.carry.energy > 0;
     } else {
-      creep.memory.transferring = creep.carry.energy === creep.carryCapacity;
+      isTranferring = creep.carry.energy === creep.carryCapacity;
     }
+    creepControl.setMemory('transferring', isTranferring);
 
-    if (creep.memory.transferring) {
-      let targets = creepControl.findStructureWitchFreeCapacity([STRUCTURE_EXTENSION]);
-
-      // Transfer to container if extension is full.
-      if (!targets) {
-        targets = creepControl.findStructureWitchFreeCapacity([STRUCTURE_CONTAINER]);
-      }
-
-      console.log('targets', JSON.stringify(targets));
-
-      if (targets.length > 0) {
-        if (creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          creep.moveTo(targets[0]);
-        }
-        else {
-          creepControl.say(CreepCustomStatus.TRANSFER_ENERGY);
-        }
-      }
-
+    if (isTranferring) {
+      this.transferEnergyToStructure(creepControl);
     }
     else {
-      let targets = creep.room.find(FIND_DROPPED_RESOURCES);
-      if (targets.length > 0) {
-        targets.sort((a, b) => b.energy - a.energy)
-
-        if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
-          creep.moveTo(targets[0]);
-        }
-        else {
-          this.saveMoveTicks(creep);
-          creepControl.say(CreepCustomStatus.PICK_UP_ENERGY);
-        }
-
-      } else {
-        var containers = creep.room.find(FIND_STRUCTURES, {
-          filter: (i) =>
-            i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0
-        });
-
-        // Fetch energy from container.
-        if (containers.length > 0) {
-          // console.log(JSON.stringify(containers, null, '\t'))
-          // containers = containers.filter(container => container.store);
-          containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY]);
-
-          if (creep.withdraw(containers[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(containers[0]);
-          }
-          else {
-            creepControl.say(CreepCustomStatus.WITHDRAW_ENERGY);
-          }
-        }
-      }
-
+      this.findEnergy(creepControl);
     }
-
   }
 
   bootstrap(creep) {
@@ -98,6 +51,31 @@ class RoleMover extends RoleBase {
     }
 
     creep.memory.booted = true;
+  }
+
+  transferEnergyToStructure(creepControl) {
+    // Structure type order matters!!!
+    const target = creepControl.findStructureWitchFreeCapacity([
+      STRUCTURE_EXTENSION, STRUCTURE_STORAGE, STRUCTURE_CONTAINER
+    ]);
+
+    if (target) {
+      creepControl.transferEnergy(target);
+    }
+  }
+
+  findEnergy(creepControl) {
+    let target = creepControl.findDroppedResource();
+
+    if (target) {
+      creepControl.pickupEnergy(target);
+      return;
+    }
+
+    target = creepControl.findContainerAndStorageWithEnergy();
+    if (target) {
+      creepControl.withdrawEnergy(target);
+    }
   }
 
 }
