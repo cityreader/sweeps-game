@@ -1,23 +1,13 @@
-const { CreepCustomStatus } = require('constants');
 const RoleBase = require('role-base');
 
 class RoleMover extends RoleBase {
 
   run(creepControl) {
-    const creep = creepControl.creep;
-
     creepControl.boot();
 
     // creepControl.checkHealth();
 
-    let isTranferring = creepControl.getMemory('transferring');
-
-    if (isTranferring) {
-      isTranferring = creep.carry.energy > 0;
-    } else {
-      isTranferring = creep.carry.energy === creep.carryCapacity;
-    }
-    creepControl.setMemory('transferring', isTranferring);
+    const isTranferring = this.getStatus(creepControl);
 
     if (isTranferring) {
       this.transferEnergyToStructure(creepControl);
@@ -25,6 +15,20 @@ class RoleMover extends RoleBase {
     else {
       this.findEnergy(creepControl);
     }
+  }
+
+  getStatus(creepControl) {
+    const creep = creepControl.creep;
+    let status = creepControl.getMemory('transferring');
+    let newStatus;
+
+    if (status) {
+      newStatus = creep.carry.energy > 0;
+    } else {
+      newStatus = creep.carry.energy === creep.carryCapacity;
+    }
+    creepControl.setMemory('transferring', newStatus);
+    return newStatus;
   }
 
   bootstrap(creep) {
