@@ -161,6 +161,14 @@ class CreepControl {
    * Actions
    */
 
+  build(target) {
+    if (this.creep.build(target) === ERR_NOT_IN_RANGE) {
+      this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+    } else {
+      this.say(CreepCustomStatus.BUILD);
+    }
+  }
+  
   harvestEnergy(target) {
     if (this.creep.harvest(target) === ERR_NOT_IN_RANGE) {
       this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffaa00' } } );
@@ -188,19 +196,19 @@ class CreepControl {
     }
   }
 
+  upgrade() {
+    if (this.creep.upgradeController(this.creep.room.controller) === ERR_NOT_IN_RANGE) {
+      this.creep.moveTo(this.creep.room.controller);
+    } else {
+      this.say(CreepCustomStatus.UPGRADE);
+    }
+  }
+
   withdrawEnergy(target) {
     if (this.creep.withdraw(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
       this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
     } else {
       this.say(CreepCustomStatus.WITHDRAW_ENERGY);
-    }
-  }
-
-  build(target) {
-    if (this.creep.build(target) === ERR_NOT_IN_RANGE) {
-      this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
-    } else {
-      this.say(CreepCustomStatus.BUILD);
     }
   }
 

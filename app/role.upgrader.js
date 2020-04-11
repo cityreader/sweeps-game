@@ -1,4 +1,3 @@
-const { CreepCustomStatus } = require('constants');
 const RoleBase = require('role-base');
 
 class RoleUpgrader extends RoleBase {
@@ -7,113 +6,30 @@ class RoleUpgrader extends RoleBase {
     const creep = creepControl.creep;
     this.boostrap(creep);
 
-    if (creep.memory.upgrading && creep.carry.energy == 0) {
-      creep.memory.upgrading = false;
-      creep.say('⛏ harvest');
+    const isUpgrading = this.getStatus(creepControl);
+
+    if (isUpgrading) {
+      creepControl.upgrade();
+    } else {
+      this.findEnergy(creepControl);
+    }
+  }
+
+  getStatus(creepControl) {
+    const creep = creepControl.creep;
+    let isUpgrading = creepControl.getMemory('upgrading');
+    let newStatus = isUpgrading;
+
+    if (isUpgrading && creep.carry.energy === 0) {
+      newStatus = false;
     }
     
-    if (!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
-      creep.memory.upgrading = true;
-      creep.say('upgrading');
+    if (!isUpgrading && creep.store.getFreeCapacity() === 0) {
+      newStatus = true;
     }
 
-    if (creep.memory.upgrading) {
-      if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(creep.room.controller);
-      }
-    }
-    else {
-      const carryCapacity = creepControl.carryCapacity;
-
-      // Harvest energy when room energy is not enough for creating an extra creep.
-      if (carryCapacity + 700 > creep.room.energyAvailable) {
-
-        let containers = creepControl.findContainerWitchMinimumEnergy(100);
-
-        // Fetch energy from container.
-        if (containers.length > 0) {
-          containers = containers.filter(container => container.store);
-          containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY]);
-
-          if (creep.withdraw(containers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(containers[0]);
-          }
-          else {
-            creep.say('Container transferring');
-          }
-        }
-        else {
-          var targets = creep.room.find(FIND_DROPPED_RESOURCES);
-          // Pickup dropped energy.
-          if (targets.length > 0) {
-            targets.sort((a, b) => b.energy - a.energy)
-
-            if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
-              creep.moveTo(targets[0]);
-            }
-            else {
-              creep.say('Picking up');
-              this.saveMoveTicks(creep);
-            }
-
-          }
-          else {
-            const sources = creep.room.find(FIND_SOURCES);
-
-            var source;
-
-            _.forEach(sources, s => {
-              // Harvest
-              if (s.memory.workers.length < s.memory.capacity) {
-                source = s;
-                return false;
-              }
-            });
-
-            if (!source) {
-              source = sources[0];
-            }
-
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-              creep.moveTo(source);
-            }
-
-          }
-        }
-
-      }
-      // Withdraw energy from closest place.
-      else {
-        let targets = creep.room.find(FIND_DROPPED_RESOURCES);
-        if (targets.length > 0) {
-          targets.sort((a, b) => b.energy - a.energy)
-
-          if (creep.pickup(targets[0]) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(targets[0]);
-          }
-          else {
-            this.saveMoveTicks(creep);
-            creepControl.say(CreepCustomStatus.PICK_UP_ENERGY);
-          }
-
-        } else {
-          const controllerId = creep.room.controller.id;
-          const energySourceId = Memory.controllers[controllerId];
-          const energySource = Game.getObjectById(energySourceId);
-
-          if (creep.withdraw(energySource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(energySource);
-          }
-          else {
-            creep.say('Withdrawing');
-          }
-        }
-
-
-      }
-
-    }
-
+    creepControl.setMemory('transferring', newStatus);
+    return newStatus;
   }
 
   boostrap(creep) {
@@ -142,6 +58,34 @@ class RoleUpgrader extends RoleBase {
       Memory.controllers[controllerId] = closest.id;
       // console.log(`Memory.controllers[${controllerId}] ${Memory.controllers[controllerId]}`)
     }
+  }
+
+  findEnergy(creepControl) {
+    const creep = creepControl.creep;
+    const carryCapacity = creepControl.carryCapacity;
+    let target;
+
+    // Harvest energy when room energy is not enough for creating an extra creep.
+    if (carryCapacity + 700 > creep.room.energyAvailable) {
+ 
+    }
+
+    target = creepControl.findDroppedResource();
+
+    if (target) {
+      creepControl.pickupEnergy(target);
+      return;
+    }
+
+    target = creepControl.findContainerAndStorageWithEnergy();
+
+    if (target) {
+      creepControl.withdrawEnergy(target);
+      return;
+    }
+
+    target = creepControl.getSource();
+    creepControl.harvestEnergy(target);
   }
 
 }
