@@ -11,18 +11,17 @@ class RoleMover extends RoleBase {
 
     if (isTranferring) {
       this.transferEnergyToStructure(creepControl);
-    }
-    else {
+    } else {
       this.findEnergy(creepControl);
     }
   }
 
   getStatus(creepControl) {
     const creep = creepControl.creep;
-    let status = creepControl.getMemory('transferring');
+    let isTransferring = creepControl.getMemory('transferring');
     let newStatus;
 
-    if (status) {
+    if (isTransferring) {
       newStatus = creep.carry.energy > 0;
     } else {
       newStatus = creep.carry.energy === creep.carryCapacity;
@@ -60,7 +59,7 @@ class RoleMover extends RoleBase {
   transferEnergyToStructure(creepControl) {
     // Structure type order matters!!!
     const target = creepControl.findStructureWitchFreeCapacity([
-      STRUCTURE_EXTENSION, STRUCTURE_STORAGE, STRUCTURE_CONTAINER
+      STRUCTURE_SPAWN, STRUCTURE_EXTENSION, STRUCTURE_STORAGE, STRUCTURE_CONTAINER
     ]);
 
     if (target) {
