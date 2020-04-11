@@ -6,8 +6,7 @@ class RoleBuilder extends RoleBase {
 
     if (isBuilding) {
       this.buildConstructionSites(creepControl);
-    }
-    else {
+    } else {
       this.findEnergy(creepControl);
     }
   }
@@ -15,7 +14,7 @@ class RoleBuilder extends RoleBase {
   getStatus(creepControl) {
     const creep = creepControl.creep;
     let isBuilding = creepControl.getMemory('building');
-    let newStatus;
+    let newStatus = isBuilding;
 
     if (isBuilding && creep.store[RESOURCE_ENERGY] === 0) {
       newStatus = false;
