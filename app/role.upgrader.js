@@ -17,7 +17,7 @@ class RoleUpgrader extends RoleBase {
 
   getStatus(creepControl) {
     const creep = creepControl.creep;
-    let isUpgrading = creepControl.getMemory('upgrading');
+    let isUpgrading = creepControl.getMemory('upgrading') || false;
     let newStatus = isUpgrading;
 
     if (isUpgrading && creep.carry.energy === 0) {
@@ -28,7 +28,7 @@ class RoleUpgrader extends RoleBase {
       newStatus = true;
     }
 
-    creepControl.setMemory('transferring', newStatus);
+    creepControl.setMemory('upgrading', newStatus);
     return newStatus;
   }
 

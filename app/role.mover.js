@@ -18,7 +18,7 @@ class RoleMover extends RoleBase {
 
   getStatus(creepControl) {
     const creep = creepControl.creep;
-    let isTransferring = creepControl.getMemory('transferring');
+    let isTransferring = creepControl.getMemory('transferring') || false;
     let newStatus;
 
     if (isTransferring) {
