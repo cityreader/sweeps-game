@@ -161,31 +161,46 @@ class CreepControl {
    * Actions
    */
 
+  harvestEnergy(target) {
+    if (this.creep.harvest(target) === ERR_NOT_IN_RANGE) {
+      this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffaa00' } } );
+      this.say(CreepCustomStatus.MOVE);
+    } else {
+      this.saveMoveTicks();
+      this.say(CreepCustomStatus.HARVEST_ENERGY);
+    }
+  } 
+
   pickupEnergy(target) {
     if (this.creep.pickup(target) === ERR_NOT_IN_RANGE) {
-      this.creep.moveTo(target);
-    }
-    else {
-      this.saveMoveTicks(this.creep);
+      this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+    } else {
+      this.saveMoveTicks();
       this.say(CreepCustomStatus.PICK_UP_ENERGY);
     }
   }
 
   transferEnergy(target) {
     if (this.creep.transfer(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-      this.creep.moveTo(target);
-    }
-    else {
+      this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+    } else {
       this.say(CreepCustomStatus.TRANSFER_ENERGY);
     }
   }
 
   withdrawEnergy(target) {
     if (this.creep.withdraw(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-      this.creep.moveTo(target);
-    }
-    else {
+      this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+    } else {
       this.say(CreepCustomStatus.WITHDRAW_ENERGY);
+    }
+  }
+
+  build(target) {
+    if (this.creep.build(target) === ERR_NOT_IN_RANGE) {
+      this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+    } else {
+      this.say(CreepCustomStatus.BUILD);
     }
   }
 
@@ -273,6 +288,11 @@ class CreepControl {
   findTargetWithMoreEnergy(targets) {
     targets.sort((a, b) => a.energy - b.energy);
     return targets.reverse()[0];
+  }
+
+  findConstructionSites() {
+    const targets = this.creep.room.find(FIND_CONSTRUCTION_SITES);
+    return targets ? targets[0] : null;
   }
 
   /**
